@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/02/14 19:27:54 by fsidler          ###   ########.fr        #
+#    Updated: 2019/02/19 19:31:50 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,23 +14,25 @@ FT_NM = ft_nm
 FT_OTOOL = ft_otool
 
 CC = gcc
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror -pedantic
 
 ifeq ($(DEBUG),yes)
-	FLAGS += -g -fsanitize=address -DNMOTOOL_DEBUG
+	FLAGS += -g -fsanitize=address,undefined -D NMOTOOL_DEBUG
 endif
 
 INC_DIR = includes
 SRC_DIR = sources
 OBJ_DIR = objs
 
-SRC_COMMON =	
+SRC_COMMON =	ft_file.c \
+				ft_string.c \
+				ft_log.c
 
 SRC_NM = 		nm.c \
-				$(SRC_COMMON) \
+				$(SRC_COMMON)
 
 SRC_OTOOL =		otool.c \
-				$(SRC_COMMON) \
+				$(SRC_COMMON)
 
 OBJ_NM = $(addprefix $(OBJ_DIR)/, $(SRC_OTOOL:.c=.o))
 OBJ_OTOOL = $(addprefix $(OBJ_DIR)/, $(SRC_NM:.c=.o))
