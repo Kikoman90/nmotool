@@ -12,6 +12,7 @@
 
 #include "nmotool.h"
 
+// tmp
 int		ft_log_error(char const *str1, char const *str2)
 {
 	if (NMOTOOL_DEBUG)
@@ -25,12 +26,7 @@ int		ft_log_error(char const *str1, char const *str2)
 	return (0);
 }
 
-// ft_log_error(char const *type, char const *err, char const *from)
-// {
-//	if (type...)
-//	if (err...)
-//	if (from...)
-// }
+// tmp
 void	*ft_log_error_null(char const *str1, char const *str2)
 {
 	if (NMOTOOL_DEBUG)
@@ -43,3 +39,24 @@ void	*ft_log_error_null(char const *str1, char const *str2)
 	}
 	return (NULL);
 }
+
+
+
+// TODO: fonctions a modifier comme ci-dessous:
+// ft_log_error(char const *type, char const *err, char const *from)
+// {
+//	if (type...) -> MACROS
+//	if (err...) -> message d'erreur
+//	if (from...) -> nom de la fonction "__func__"
+// }
+//
+// ft_logF_error(char const *type, char const *err, char const *from)
+// {
+//	if (err...) {
+//	    ...
+//          free(err);
+//	}
+// }
+
+// exemples d'utilisation: return (ft_log_error_null(ERR_FILE, strerror(errno), __func__));
+//			   return (ft_logF_error(ERR_MMAP, ft_strjoin("mmap has failed: ", strerror(errno)), __func__));
