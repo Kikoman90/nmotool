@@ -12,6 +12,7 @@
 
 #include "nmotool.h"
 
+<<<<<<< HEAD
 static char	const *err_map[ERR_N] = {
 	"invalid file",
 	"mmap failed",
@@ -46,6 +47,10 @@ int		ft_log_error(unsigned int type, char const *err, char const *from)
 }
 
 int		ft_logF_error(unsigned int type, char *err, char const *from)
+=======
+// tmp
+int		ft_log_error(char const *str1, char const *str2)
+>>>>>>> 78224023eee0a05168402166b56334ef25835aea
 {
 	if (NMOTOOL_DEBUG)
 	{
@@ -72,6 +77,7 @@ int		ft_logF_error(unsigned int type, char *err, char const *from)
 	return (0);
 }
 
+<<<<<<< HEAD
 void	*ft_log_error_null(unsigned int type, char const *err, char const *from)
 {
 	if (NMOTOOL_DEBUG)
@@ -99,6 +105,10 @@ void	*ft_log_error_null(unsigned int type, char const *err, char const *from)
 }
 
 void	*ft_logF_error_null(unsigned int type, char *err, char const *from)
+=======
+// tmp
+void	*ft_log_error_null(char const *str1, char const *str2)
+>>>>>>> 78224023eee0a05168402166b56334ef25835aea
 {
 	if (NMOTOOL_DEBUG)
 	{
@@ -124,3 +134,24 @@ void	*ft_logF_error_null(unsigned int type, char *err, char const *from)
 	ft_putstr_fd(2, "\n\033[0m");
 	return (NULL);
 }
+
+
+
+// TODO: fonctions a modifier comme ci-dessous:
+// ft_log_error(char const *type, char const *err, char const *from)
+// {
+//	if (type...) -> MACROS
+//	if (err...) -> message d'erreur
+//	if (from...) -> nom de la fonction "__func__"
+// }
+//
+// ft_logF_error(char const *type, char const *err, char const *from)
+// {
+//	if (err...) {
+//	    ...
+//          free(err);
+//	}
+// }
+
+// exemples d'utilisation: return (ft_log_error_null(ERR_FILE, strerror(errno), __func__));
+//			   return (ft_logF_error(ERR_MMAP, ft_strjoin("mmap has failed: ", strerror(errno)), __func__));
