@@ -3,50 +3,59 @@
 /*                                                        :::      ::::::::   */
 /*   ft_file.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/01 14:26:55 by fsidler           #+#    #+#             */
-/*   Updated: 2019/03/11 17:03:23 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/05/22 16:15:59 by jfortin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nmotool.h"
 
-void	*ft_file_map(char const *path, size_t *data_size)
+static t_file_info file_info = { NULL, 0, 0 };
+
+void	*get_safe(size_t offset, size_t size)
+{
+	return ((void *) \
+		((size_t)(file_info.ptr + file_info.start_offset + offset) * \
+		(file_info.start_offset + offset + size <= file_info.filesize)));
+}
+
+bool	load_file(char const *path)
 {
 	int			fd;
-	void		*data;
 	struct stat	file_stat;
 
 	if ((fd = open(path, O_RDONLY)) == -1)
-		return (ft_log_error_null(ERR_FILE, strerror(errno), __func__));
+		return (ft_log_error(ERR_FILE, strerror(errno), __func__));
 	if (fstat(fd, &file_stat) == -1)
 	{
 		close(fd);
-		return (ft_log_error_null(ERR_FILE, strerror(errno), __func__));
+		return (ft_log_error(ERR_FILE, strerror(errno), __func__));
 	}
-	*data_size = (size_t)file_stat.st_size;
-	if ((data = mmap(NULL, *data_size, PROT_READ, MAP_PRIVATE, fd, 0)) \
-		== MAP_FAILED)
+	if (file_stat.st_size <= 0)
 	{
 		close(fd);
-		return (ft_log_error_null(ERR_MMAP, strerror(errno), __func__));
+		return (ft_log_error(ERR_FILE, "invalid size", __func__));
+	}
+	file_info.filesize = (size_t)file_stat.st_size;
+	if ((file_info.ptr = mmap(NULL, file_info.filesize, PROT_READ, MAP_PRIVATE,
+		fd, 0)) == MAP_FAILED)
+	{
+		close(fd);
+		return (ft_log_error(ERR_MMAP, strerror(errno), __func__));
 	}
 	close(fd);
-	return (data);
+	return (true);
 }
 
-void	ft_file_unmap(void *data, size_t fsize, char *fpath)
+bool	unload_file(void)
 {
-	if (fpath)
+	if (file_info.ptr)
 	{
-		free(fpath);
-		fpath = NULL;
+		if (munmap(file_info.ptr, file_info.filesize) == -1)
+			return (ft_log_error(ERR_MUNMAP, strerror(errno), __func__));
+		file_info.ptr = NULL;
 	}
-	if (data)
-	{
-		if (munmap(data, fsize) == -1)
-			ft_log_error(ERR_MUNMAP, strerror(errno), __func__);	
-		data = NULL;
-	}
+	return (true);
 }

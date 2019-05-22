@@ -3,54 +3,50 @@
 /*                                                        :::      ::::::::   */
 /*   ft_log.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/19 19:16:55 by fsidler           #+#    #+#             */
-/*   Updated: 2019/03/11 17:51:16 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/05/22 17:01:47 by jfortin          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nmotool.h"
 
-<<<<<<< HEAD
 static char	const *err_map[ERR_N] = {
 	"invalid file",
 	"mmap failed",
 	"munmap failed",
-	"yolo"
+	""
 };
 
-int		ft_log_error(unsigned int type, char const *err, char const *from)
+// invalid_file : bad string index in stringtable ->   
+//  -> in _fill_sym_array
+//  -> in _manage_sym_arr
+//  -> in _manage_lc_symtab
+//  -> in _handle
+//  -> in _manage_handle
+
+bool	ft_log_error(unsigned int type, char const *err, char const *from)
 {
 	if (NMOTOOL_DEBUG)
 	{
 		ft_putstr_fd(2, NMO_ERR_OUT);
-		ft_putstr_fd(2, "[");
-		if (from)
-		{
-			ft_putstr_fd(2, from);
-			ft_putstr_fd(2, " - ");
-		}
-		ft_putstr_fd(2, "ERROR]");
-		ft_putstr_fd(2, NMO_CLR_OUT);
-		ft_putchar_fd(2, ' ');
 		if (type < ERR_N)
 			ft_putstr_fd(2, err_map[type]);
+		ft_putstr_fd(2, " : ");
 		if (err)
-		{
-			ft_putstr_fd(2, " -> ");
 			ft_putstr_fd(2, err);
+		if (from)
+		{
+			(err) ? ft_putstr_fd(2, " ") : ft_putstr_fd(2, "\t");
+			ft_putstr_fd(2, from);
 		}
+		ft_putstr_fd(2, NMO_CLR_OUT);
 	}
-	ft_putstr_fd(2, "\n\033[0m");
-	return (0);
+	return (false);
 }
 
-int		ft_logF_error(unsigned int type, char *err, char const *from)
-=======
-// tmp
-int		ft_log_error(char const *str1, char const *str2)
->>>>>>> 78224023eee0a05168402166b56334ef25835aea
+/*int		ft_logF_error(unsigned int type, char *err, char const *from)
 {
 	if (NMOTOOL_DEBUG)
 	{
@@ -75,40 +71,29 @@ int		ft_log_error(char const *str1, char const *str2)
 	}
 	ft_putstr_fd(2, "\n\033[0m");
 	return (0);
-}
+}*/
 
-<<<<<<< HEAD
 void	*ft_log_error_null(unsigned int type, char const *err, char const *from)
 {
 	if (NMOTOOL_DEBUG)
 	{
 		ft_putstr_fd(2, NMO_ERR_OUT);
-		ft_putstr_fd(2, "[");
-		if (from)
-		{
-			ft_putstr_fd(2, from);
-			ft_putstr_fd(2, " - ");
-		}
-		ft_putstr_fd(2, "ERROR]");
-		ft_putstr_fd(2, NMO_CLR_OUT);
-		ft_putchar_fd(2, ' ');
 		if (type < ERR_N)
 			ft_putstr_fd(2, err_map[type]);
+		ft_putstr_fd(2, " : ");
 		if (err)
-		{
-			ft_putstr_fd(2, " -> ");
 			ft_putstr_fd(2, err);
+		if (from)
+		{
+			(err) ? ft_putstr_fd(2, " ") : ft_putstr_fd(2, "\t");
+			ft_putstr_fd(2, from);
 		}
+		ft_putstr_fd(2, NMO_CLR_OUT);
 	}
-	ft_putstr_fd(2, "\n\033[0m");
 	return (NULL);
 }
 
-void	*ft_logF_error_null(unsigned int type, char *err, char const *from)
-=======
-// tmp
-void	*ft_log_error_null(char const *str1, char const *str2)
->>>>>>> 78224023eee0a05168402166b56334ef25835aea
+/*void	*ft_logF_error_null(unsigned int type, char *err, char const *from)
 {
 	if (NMOTOOL_DEBUG)
 	{
@@ -133,7 +118,7 @@ void	*ft_log_error_null(char const *str1, char const *str2)
 	}
 	ft_putstr_fd(2, "\n\033[0m");
 	return (NULL);
-}
+}*/
 
 
 
