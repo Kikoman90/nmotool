@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/03/11 17:25:40 by fsidler          ###   ########.fr        #
+#    Updated: 2019/05/22 19:39:09 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,11 +24,10 @@ INC_DIR = includes
 SRC_DIR = sources
 OBJ_DIR = objs
 
-SRC_COMMON =	ft_file.c \
-				ft_endian.c \
-				ft_string.c \
-				ft_log.c \
-				safe_ptr.c \
+SRC_COMMON =	file.c \
+				endian.c \
+				string.c \
+				log.c \
 
 SRC_NM = 		nm.c \
 				$(SRC_COMMON)

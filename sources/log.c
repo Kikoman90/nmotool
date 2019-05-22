@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_log.c                                           :+:      :+:    :+:   */
+/*   log.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/19 19:16:55 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/22 17:01:47 by jfortin          ###   ########.fr       */
+/*   Updated: 2019/05/22 20:07:06 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static char	const *err_map[ERR_N] = {
 //  -> in _handle
 //  -> in _manage_handle
 
-bool	ft_log_error(unsigned int type, char const *err, char const *from)
+bool	log_error(unsigned int type, char const *err, char const *from)
 {
 	if (NMOTOOL_DEBUG)
 	{
@@ -73,7 +73,7 @@ bool	ft_log_error(unsigned int type, char const *err, char const *from)
 	return (0);
 }*/
 
-void	*ft_log_error_null(unsigned int type, char const *err, char const *from)
+void	*log_error_null(unsigned int type, char const *err, char const *from)
 {
 	if (NMOTOOL_DEBUG)
 	{
