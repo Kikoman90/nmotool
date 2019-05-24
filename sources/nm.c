@@ -3,121 +3,50 @@
 /*                                                        :::      ::::::::   */
 /*   nm.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jfortin <jfortin@student.42.fr>            +#+  +:+       +#+        */
+/*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/14 19:21:53 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/22 20:15:46 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/05/24 20:41:52 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "nmotool.h"
+#include "nm.h"
 
 // show usage in case of invalid flag or input
 
+/*
 bool	nm_set_flag(char const *flag)
 {
 	if (ft_strlen(flag) >= 2)
 		; //return (ft_log_error(ERR_FILE, "missing magic number", __func__)); ERR_FLAG "invalid or unknown flag"
 	return (false);
 }
+*/
 
-
-
-// static bool is_64_global_static = false;
-
-bool	iterate_segments(uint32_t target)
+bool	manage_segment()//idk
 {
-	static const size_t header_sizes[2] = {
-		sizeof(struct mach_header),
-		sizeof(struct mach_header_64)
-	};
-	struct mach_header	*header;
-	struct load_command	*command;
-	uint32_t			ncmds;
-	size_t				offset;
-
-	offset = header_sizes[g_is_64];
-	if (!(header = get_safe(0, offset)))
-		return (log_error(ERR_FILE, "header fetch failed", __func__));
-	if (!(command = get_safe(offset, sizeof(*command))))
-			return (log_error(ERR_FILE, "load command fetch failed", __func__));
-	ncmds = swap32(header->ncmds);
-	while (ncmds--)
-	{
-		if (swap32(command->cmd) == target && offset)// && )
-			return (log_error(ERR_THROW, NULL, __func__));
-		offset += swap32(command->cmdsize);
-		if (!(command = get_safe(offset, sizeof(*command))))
-			return (log_error(ERR_FILE, "load command fetch failed", __func__));
-	}
 	return (true);
 }
 
-bool	iterate_sections(size_t offset, char const *sectname_target,
-	char const *segname_target)
+bool	manage_symtab()//idk
 {
-	struct segment_command	*segment;
-	struct section			*section;
-	uint32_t				nsects;
-
-	//if (!(segment = get_safe(offset, (g_is_64) ? sizeof(*segment) : sizeof(64lol)))
-	//	return (log_error(ERR_FILE, "segment command fetch failed", __func__));
-	offset += sizeof(*segment);
-	if (!(section = get_safe(offset, sizeof(*section))))
-		return (log_error(ERR_FILE, "section fetch failed", __func__));
-	nsects = swap32(segment->nsects);
-	while (nsects--)
-	{
-		if ((!sectname_target || !ft_strcmp(sectname_target, section->sectname))
-			&& (!segname_target || !ft_strcmp(segname_target, section->segname))
-			&& func(offset))
-			return (log_error(ERR_THROW, NULL, __func__));
-		offset += sizeof(*section);
-		if (!(section = get_safe(offset, sizeof(*section))))
-			return (log_error(ERR_FILE, "section fetch failed", __func__));
-	}
 	return (true);
 }
 
-bool	nm_agent()
+bool	nm_agent(void)
 {
-	//
-	if (!iterate_segments(LC_SYMTAB)) // , fct_ptr
-		return (log_error(ERR_THROW, "", __func__));
-	if (!iterate_sections())
+	static uint32_t	segment[] = { LC_SEGMENT, LC_SEGMENT_64 };
+
+	if (!iterate_load_commands(segment[g_is_64], &manage_segment))
+		return (log_error(ERR_THROW, "failed to iterate over segment commands",\
+			FROM, NULL));
+	if (!iterate_load_commands(LC_SYMTAB, &manage_symtab))
+		return (log_error(ERR_THROW, "failed to iterate over symtab commands", \
+			FROM, NULL));
 	return (true);
 }
 
-static bool	inspect_magic_number(uint32_t magic)
-{
-	if (magic != MH_MAGIC && magic != MH_CIGAM && magic != MH_MAGIC_64
-		&& magic != MH_CIGAM_64 && magic != FAT_MAGIC && magic != FAT_CIGAM
-		&& magic != FAT_MAGIC_64 && magic != FAT_CIGAM_64)
-		return (log_error(ERR_FILE, "wrong magic number", __func__));
-	set_endianness(magic == MH_CIGAM || magic == MH_CIGAM_64
-		|| magic == FAT_CIGAM || magic == FAT_CIGAM_64);
-	g_is_64 = (magic == MH_MAGIC_64 || magic == MH_CIGAM_64
-		|| magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64);
-	return (true);
-}
-
-// move this to common file
-bool	extract_macho(t_inspector agent)
-{
-	uint32_t	*magic;
-
-	if (!(magic = get_safe(0, sizeof(*magic))))
-		return (log_error(ERR_FILE, "missing magic number", __func__));
-	if (!inspect_magic_number(*magic))
-		return (log_error(ERR_THROW, NULL, __func__));
-	if (*magic == FAT_MAGIC || *magic == FAT_CIGAM || *magic == FAT_MAGIC_64
-		|| *magic == FAT_CIGAM_64)
-		;//agent()
-	else
-		;//agent()
-	return (true);
-}
-
+// ce main est immonde
 int		main(int argc, char **argv)
 {
 	if (argc < 2)
