@@ -14,57 +14,42 @@
 
 // push_bounds/pop_bounds !
 
-bool		iterate_load_commands(uint32_t target, t_lc_manager funk)
+bool		iterate_load_commands(uint32_t ncmds, uint32_t target, t_lc_manager funk)
 {
-	static const size_t header_sizes[2] = {
-		sizeof(struct mach_header),
-		sizeof(struct mach_header_64)
-	};
-	struct mach_header	*header;
-	struct load_command	*command;
-	uint32_t			ncmds;
 	size_t				offset;
+	struct load_command	*command;
 
-	offset = header_sizes[g_is_64];
-	if (!(header = get_safe(0, offset)))
-		return (log_error(ERR_FILE, "header fetch failed", __func__));
-	if (!(command = get_safe(offset, sizeof(*command))))
-			return (log_error(ERR_FILE, "load command fetch failed", __func__));
-	ncmds = swap32(header->ncmds);
+	offset = 0;
 	while (ncmds--)
 	{
-		if (swap32(command->cmd) == target && offset)// && )
-			return (log_error(ERR_THROW, NULL, __func__));
-		offset += swap32(command->cmdsize);
 		if (!(command = get_safe(offset, sizeof(*command))))
-			return (log_error(ERR_FILE, "load command fetch failed", __func__));
+			return (log_error(ERR_FILE, "load command fetch failed", FROM));
+		if (swap32(command->cmd) == target && !funk(offset, command->cmdsize))
+			return (log_error(ERR_THROW, "load command manager failed", FROM));
+		offset += swap32(command->cmdsize);
 	}
 	return (true);
 }
 
-bool		iterate_sections(size_t offset, char const *sectname_target, \
+bool		iterate_sections(uint32_t nsects, char const *sectname_target, \
 				char const *segname_target, t_section_manager funk)
 {
-	//struct segment_command	*segment;
-	void					*ptr_segment;
-	struct section			*section;
-	uint64_t				nsects;
+	t_section	*section;
 
-	//if (!(segment = get_safe(offset, (g_is_64) ? sizeof(*segment) : sizeof(64lol)))
-	//	return (log_error(ERR_FILE, "segment command fetch failed", __func__));
-	//offset += sizeof(*segment);
-	if (!(section = get_safe(offset, sizeof(*section))))
-		return (log_error(ERR_FILE, "section fetch failed", __func__));
-	nsects = swap32(segment->nsects);
+	size_t			offset;
+	size_t			section_struct_size;
+	struct section	*section;
+
+	offset = 0;
 	while (nsects--)
 	{
-		if ((!sectname_target || !ft_strcmp(sectname_target, section->sectname))
-			&& (!segname_target || !ft_strcmp(segname_target, section->segname))
-			&& func(offset))
-			return (log_error(ERR_THROW, NULL, __func__));
-		offset += sizeof(*section);
-		if (!(section = get_safe(offset, sizeof(*section))))
-			return (log_error(ERR_FILE, "section fetch failed", __func__));
+		if (!(section = get_safe(offset, mode.sizeof_sec)))
+			return (log_error(ERR_FILE, "section fetch failed", FROM));
+		if ((!sectname_target || !ft_strcmp(sectname_target, mode.get_sectname(section)))
+			&& (!segname_target || !ft_strcmp(segname_target, mode.get_segname(section)))
+			&& funk(offset))
+			return (log_error(ERR_THROW, "section manager failed", FROM));
+		offset += mode.sizeof_sec;
 	}
 	return (true);
 }
@@ -84,8 +69,10 @@ bool		extract_macho(t_agent agent)
 
 	// load file ? here ?
 	if (!(magic = get_safe(0, sizeof(*magic))))
-		return (log_error(ERR_FILE, "failed to get magic number", FROM, NULL));
+		return (log_error(ERR_FILE, "failed to get magic number", FROM));
 	inspect_magic_number(*magic);
+
+	// set funk pointers ! 32/64
 
 	if (*magic == AR_MAGIC || *magic == AR_CIGAM)
 		ret = false; // manage_archive(agent);
@@ -96,7 +83,7 @@ bool		extract_macho(t_agent agent)
 		|| *magic == MH_MAGIC_64 || *magic == MH_CIGAM_64)
 		ret = agent();
 	else
-		ret = log_error(ERR_THROW, "invalid/unsupported magic", FROM, NULL);
+		ret = log_error(ERR_THROW, "invalid/unsupported magic", FROM);
 	// unload file ? here ?
 	return (ret);
 }

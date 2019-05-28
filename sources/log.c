@@ -25,8 +25,7 @@ static char	const *err_map[ERR_N] = {
 //		{file : function l2} -> could not find string entry
 //			{file : function l102} -> some data could not be fetched. aborting...
 
-bool	log_error(enum e_error_type type, char const *err, char const *from, \
-			t_error_callback callback)
+bool	log_error(enum e_error_type type, char const *err, char const *from)
 {
 	static uint32_t indent_level = 0;
 
@@ -45,7 +44,5 @@ bool	log_error(enum e_error_type type, char const *err, char const *from, \
 		ft_putstr_fd(2, err_map[type]);
 	if (err)
 		ft_pustr_fd(2, err);
-	if (callback)
-		callback();
 	return (false);
 }

@@ -23,26 +23,44 @@ bool	nm_set_flag(char const *flag)
 }
 */
 
-bool	manage_segment()//idk
+bool	manage_segment(size_t offset)
 {
+	uint32_t			cmdsize;
+	t_segment_command	*segment_cmd;
+
+	if (!(segment_cmd = get_safe(offset, mode.sizeof_seg_cmd)))
+		return (log_error(ERR_FILE, "segment command fetch failed", FROM));
+	cmdsize = mode.get_cmdsize(segment_cmd);
+	if (cmdsize < mode.sizeof_seg_cmd)
+		return (log_error(ERR_FILE, "field cmdsize of segment command is invalid", FROM));
+	if (!push_bounds(get_current_offset() + offset + mode.sizeof_seg_cmd, \
+		cmdsize - mode.sizeof_seg_cmd))
+		return (log_error(ERR_THROW, "failed to push bounds", FROM));
+	if (!iterate_sections(mode.get_ncmds(segment_cmd), NULL, NULL, &machin))
+		return (log_error(ERR_THROW, "failed to iterate over sections", FROM));
+	pop_bounds();
 	return (true);
 }
 
-bool	manage_symtab()//idk
+bool	manage_symtab()
 {
 	return (true);
 }
 
 bool	nm_agent(void)
 {
-	static uint32_t	segment[] = { LC_SEGMENT, LC_SEGMENT_64 };
+	t_mach_header	*header;
 
-	if (!iterate_load_commands(segment[g_is_64], &manage_segment))
-		return (log_error(ERR_THROW, "failed to iterate over segment commands",\
-			FROM, NULL));
+	if (!(header = get_safe(0, g_unit.sizeof_mach_header)))
+		return (log_error(ERR_FILE, "macho header fetch failed", FROM));
+	if (!push_bounds(g_unit.sizeof_mach_header, g_unit.get_sizeofcmds(header)))
+		return (log_error(ERR_THROW, "failed to set command bounds", FROM));
+	if (!iterate_load_commands(mode.get_ncmds(header), \
+		(g_is_64) ? LC_SEGMENT_64 : LC_SEGMENT, &manage_segment)) // -> to g_unit !
+		return (log_error(ERR_THROW, "failed to iterate over segment commands", FROM));
 	if (!iterate_load_commands(LC_SYMTAB, &manage_symtab))
-		return (log_error(ERR_THROW, "failed to iterate over symtab commands", \
-			FROM, NULL));
+		return (log_error(ERR_THROW, "failed to iterate over symtab commands", FROM));
+	pop_bounds();
 	return (true);
 }
 
