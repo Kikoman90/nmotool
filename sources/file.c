@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/01 14:26:55 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/24 19:47:39 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/05/28 16:03:10 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,24 +69,24 @@ bool	load_file(char const *path)
 	struct stat	file_stat;
 
 	if ((fd = open(path, O_RDONLY)) == -1)
-		return (ft_log_error(ERR_FILE, strerror(errno), FROM));
+		return (log_error(ERR_FILE, strerror(errno), FROM));
 	if (fstat(fd, &file_stat) == -1)
 	{
 		close(fd); // close can fail
-		return (ft_log_error(ERR_FILE, strerror(errno), FROM));
+		return (log_error(ERR_FILE, strerror(errno), FROM));
 	}
 	// check (file_stat.st_mode & S_IFDIR) -> is directory !
 	if (file_stat.st_size <= 0)
 	{
 		close(fd); // close can fail
-		return (ft_log_error(ERR_FILE, "invalid size", FROM));
+		return (log_error(ERR_FILE, "invalid size", FROM));
 	}
 	file_info.filesize = (size_t)file_stat.st_size;
 	if ((file_info.ptr = mmap(NULL, file_info.filesize, \
 		PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
 	{
 		close(fd); // close can fail
-		return (ft_log_error(ERR_MMAP, strerror(errno), FROM));
+		return (log_error(ERR_MMAP, strerror(errno), FROM));
 	}
 	close(fd); // close can fail
 	return (true);
@@ -95,13 +95,13 @@ bool	load_file(char const *path)
 // cleanup required
 bool	unload_file(void)
 {
+	while (file_info.boundaries)
+		pop_bounds();
 	if (file_info.ptr && file_info.ptr != MAP_FAILED && file_info.boundaries)
 	{
 		if (munmap(file_info.ptr, file_info.filesize) == -1)
-			return (ft_log_error(ERR_MUNMAP, strerror(errno), FROM));
+			return (log_error(ERR_MUNMAP, strerror(errno), FROM));
 		file_info.ptr = NULL;
 	}
-	while (file_info.boundaries)
-		pop_bounds();
 	return (true);
 }

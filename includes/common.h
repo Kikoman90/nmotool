@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/24 16:02:42 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/24 20:44:21 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/05/28 19:36:47 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 # define COMMON_H
 
 # include <stdlib.h>
-# include <unistd.h>
 # include <fcntl.h>
 # include <sys/stat.h>
 # include <sys/mman.h>
@@ -22,19 +21,11 @@
 # include <string.h>
 # include <errno.h>
 
-//
-# include <stdio.h> // remove me
-//
-
-# include <mach-o/loader.h>
-# include <mach-o/fat.h>
-# include <mach-o/arch.h>
+# include "funk.h"
 
 # define DEFAULT_TARGET "a.out"
 
-// magic number for archive is "!<arch>\n"
-# define AR_MAGIC 0x213C617263683E0A
-# define AR_CIGAM 0x0A3E686372613C21
+# include <ar.h>
 
 # ifndef NMO_DEBUG
 #  define NMO_DEBUG 0
@@ -57,82 +48,6 @@ enum					e_error_type {
 	ERR_N
 };
 
-typedef union					u_mach_header
-{
-	struct mach_header			mach_hdr32;
-	struct mach_header_64		mach_hdr64;
-}								t_mach_header;
-
-typedef union					u_segment_command
-{
-	struct segment_command		seg_cmd32;
-	struct segment_command_64	seg_cmd64;
-}								t_segment_command;
-
-typedef union					u_section
-{
-	struct section				sec32;
-	struct section_64			sec64;
-}								t_section;
-
-typedef union					u_nlist
-{
-	struct nlist				nlist;
-	struct nlist_64				nlist64;
-}								t_nlist;
-
-uint32_t						get_sizeofcmds32(t_mach_header *hdr)
-{
-	return (swap32(hdr->mach_hdr32.sizeofmds));
-}
-uint32_t						get_sizeofcmds64(t_mach_header *hdr)
-{
-	return (swap32(hdr->mach_hdr64.sizeofmds));
-}
-
-uint32_t						get_ncmds32(t_mach_header *hdr)
-{
-	return (swap32(hdr->mach_hdr32.ncmds));
-}
-
-uint32_t						get_ncmds64(t_mach_header *hdr)
-{
-	return (swap32(hdr->mach_hdr64.ncmds));
-}
-
-uint32_t						get_cmdsize32(t_segment_command *cmd)
-{
-	return (swap32(cmd->seg_cmd32.cmdsize));
-}
-
-uint32_t						get_cmdsize64(t_segment_command *cmd)
-{
-	return (swap32(cmd->seg_cmd64.cmdsize));
-}
-
-uint32_t						get_nsects32(t_segment_command *cmd)
-{
-	return (swap32(cmd->seg_cmd32.nsects));
-}
-
-uint32_t						get_nsects64(t_segment_command *cmd)
-{
-	return (swap32(cmd->seg_cmd64.nsects));
-}
-
-typedef struct					s_funk
-{
-	size_t						sizeof_mach_header;
-	uint32_t					(*get_sizeofcmds)(t_mach_header*);
-	uint32_t					(*get_ncmds)(t_mach_header*);
-	size_t						sizeof_segment_cmd;
-	uint32_t					(*get_cmdsize)(t_segment_command*);
-	uint32_t					(*get_nsects)(t_segment_command*);
-	size_t						sizeof_section;
-	size_t						sizeof_nlist;
-
-}								t_funk;
-
 typedef struct			s_file_info {
 	unsigned char const	*ptr;
 	size_t				filesize;
@@ -144,20 +59,20 @@ typedef struct			s_file_info {
 }						t_file_info;
 
 typedef bool			(*t_agent)(void);
+typedef void			(*t_funk)(bool);
 typedef bool			(*t_section_manager)(size_t);
 typedef bool			(*t_lc_manager)(size_t);
 
-bool					g_is_64;
-
 /*
-** common.c				=> 4 functions
+** macho.c				=> 5 functions
 */
 bool					iterate_load_commands(uint32_t ncmds, uint32_t target, \
 							t_lc_manager funk);
-bool					iterate_sections(size_t offset, \
+bool					iterate_sections(uint32_t nsects, \
 							char const *sectname_target, \
 							char const *segname_target, t_section_manager funk);
-bool					extract_macho(t_agent agent);
+bool					extract_macho(char const *filepath, t_agent agent, \
+							t_funk funk);
 
 /*
 ** file.c				=> 3 functions

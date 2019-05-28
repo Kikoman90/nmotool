@@ -6,11 +6,11 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/11 13:43:30 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/22 20:07:09 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/05/28 16:33:27 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "nmotool.h"
+#include "common.h"
 
 static bool endian_swap = false;
 

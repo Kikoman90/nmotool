@@ -1,20 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nm.h                                               :+:      :+:    :+:   */
+/*   section_funk.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/05/24 16:02:01 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/28 19:30:02 by fsidler          ###   ########.fr       */
+/*   Created: 2019/05/28 15:30:19 by fsidler           #+#    #+#             */
+/*   Updated: 2019/05/28 16:26:45 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef NM_H
-# define NM_H
+#include "common.h"
 
-# include "common.h"
+char		*sectname32(t_section *ptr_section)
+{
+	return (ptr_section->sec32.sectname);
+}
 
+char		*sectname64(t_section *ptr_section)
+{
+	return (ptr_section->sec64.sectname);
+}
 
+char		*segname32(t_section *ptr_section)
+{
+	return (ptr_section->sec32.segname);
+}
 
-#endif
+char		*segname64(t_section *ptr_section)
+{
+	return (ptr_section->sec64.segname);
+}
