@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/23 12:59:56 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/28 19:34:05 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/05/29 18:18:01 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void		set_section_funk(bool is_64)
 }
 
 bool		iterate_load_commands(uint32_t ncmds, uint32_t target, \
-				t_lc_manager funk)
+				t_lc_manager mana)
 {
 	size_t				offset;
 	struct load_command	*command;
@@ -35,31 +35,38 @@ bool		iterate_load_commands(uint32_t ncmds, uint32_t target, \
 	{
 		if (!(command = get_safe(offset, sizeof(*command))))
 			return (log_error(ERR_FILE, "load command fetch failed", FROM));
-		if (swap32(command->cmd) == target && !funk(offset))
+		if (swap32(command->cmd) == target && !mana(offset))
 			return (log_error(ERR_THROW, "load command manager failed", FROM));
 		offset += swap32(command->cmdsize);
 	}
 	return (true);
 }
 
+/*
+if (!(ptr_section = get_safe(offset, sect_funk.size_of)))
+	return (log_error(ERR_FILE, "section fetch failed", FROM));
+offset += sect_funk.size_of;
+*/
+
 bool		iterate_sections(uint32_t nsects, char const *sectname_target, \
 				char const *segname_target, t_section_manager mana)
 {
-	size_t		offset;
+	uint32_t	i;
 	t_section	*ptr_section;
 
-	offset = 0;
-	while (nsects--)
+	i = 0;
+	if (!(ptr_section = get_safe(0, nsects * sect_funk.size_of)))
+		return (log_error(ERR_FILE, "sections fetch failed", FROM));
+	while (i < nsects)
 	{
-		if (!(ptr_section = get_safe(offset, sect_funk.size_of)))
-			return (log_error(ERR_FILE, "section fetch failed", FROM));
 		if ((!sectname_target || \
 			!ft_strcmp(sectname_target, sect_funk.sectname(ptr_section))) \
 			&& (!segname_target || \
-			!ft_strcmp(segname_target, sect_funk.segname(ptr_section))) \
-			&& mana(offset))
-			return (log_error(ERR_THROW, "section manager failed", FROM));
-		offset += sect_funk.size_of;
+			!ft_strcmp(segname_target, sect_funk.segname(ptr_section))))
+			mana(i * sect_funk.size_of);
+		//return (log_error(ERR_THROW, "section manager failed", FROM));
+		ptr_section = (t_section*)((char*)ptr_section + sect_funk.size_of);
+		i++;
 	}
 	return (true);
 }
@@ -83,15 +90,16 @@ bool		extract_macho(char const *filepath, t_agent agent, t_funk funk)
 	bool		ret;
 	uint32_t	*ptr_magic;
 
-	if (!load_file(filepath))
-		return (log_error(ERR_THROW, "could not load file", FROM));
+	if (!load_file(filepath)) //
+		return (log_error(ERR_THROW, "could not load file", FROM)); //
+	ptr_magic = NULL;
 	if (!set_funky(ptr_magic, funk))
 	{
-		if (!unload_file())
-			log_error(ERR_THROW, "could not unload file", FROM);
-		return (false);
+		if (!unload_file()) //
+			log_error(ERR_THROW, "could not unload file", FROM); //
+		return (log_error(ERR_THROW, "macho settings could not be set", FROM));
 	}
-	if (*ptr_magic == AR_MAGIC || *ptr_magic == AR_CIGAM)
+	if (*ptr_magic == *((uint32_t*)ARMAG))
 		ret = false; // manage_archive(agent);
 	else if (*ptr_magic == FAT_MAGIC || *ptr_magic == FAT_CIGAM \
 		|| *ptr_magic == FAT_MAGIC_64 || *ptr_magic == FAT_CIGAM_64)
@@ -101,7 +109,7 @@ bool		extract_macho(char const *filepath, t_agent agent, t_funk funk)
 		ret = agent();
 	else
 		ret = log_error(ERR_THROW, "invalid/unsupported magic", FROM);
-	if (!unload_file())
-			log_error(ERR_THROW, "could not unload file", FROM);		
+	if (!unload_file()) //
+			log_error(ERR_THROW, "could not unload file", FROM); //
 	return (ret);
 }

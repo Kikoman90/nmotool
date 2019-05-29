@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/01 13:21:24 by fsidler           #+#    #+#             */
-/*   Updated: 2018/11/29 14:40:38 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/05/29 18:05:48 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,9 @@ char				*ft_strdup(const char *str);
 size_t				ft_strlen(const char *str);
 
 void				ft_putchar(char c);
+void				ft_putchar_fd(short fd, char c);
 void				ft_putstr(char const *s);
+void				ft_putstr_fd(short fd, char const *s);
 void				ft_putendl(char const *s);
 
 char				*ft_strnew(size_t size);
@@ -78,17 +80,5 @@ unsigned int		ft_wordoffset(char const *s, unsigned int offset);
 unsigned int		skip_line(char *data, unsigned int seed);
 
 char				*ft_itoa(int n);
-
-void				*ft_file_map(const char *path, size_t *data_size);
-void				ft_file_unmap(void *data, size_t fsize, char *fpath);
-
-void				ft_free_file_names(char **names, unsigned int nb);
-char				**ft_get_file_names(const char *dir_path, unsigned int nb, \
-						int sort);
-
-unsigned int		log_error(const char *msg);
-unsigned int		log_error_free(char *msg);
-void				*log_error_null(const char *msg);
-void				*log_error_null_free(char *msg);
 
 #endif

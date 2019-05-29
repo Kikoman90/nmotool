@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/05/24 18:21:14 by fsidler          ###   ########.fr        #
+#    Updated: 2019/05/29 21:04:30 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,22 +14,33 @@ FT_NM =		ft_nm
 FT_OTOOL =	ft_otool
 
 CC =	gcc
-FLAGS =	-Wall -Wextra -Werror #-pedantic
+FLAGS =	-Wall -Wextra -Werror -MMD
+#-pedantic
 
-ifeq ($(DEBUG),yes)
-	FLAGS += -g -fsanitize=address,undefined -D DEBUG
+ifeq ($(DEBUG), yes)
+	FLAGS += -DNMO_DEBUG #-g -fsanitize=address,undefined
 endif
+
+LIBFT_DIR = libft
+LIBFT_A = $(LIBFT_DIR)/libft.a
 
 INC_DIR =	includes
 SRC_DIR =	sources
 OBJ_DIR =	objs
 
-SRC_COMMON =	file.c \
+CHILD_DIR = funk
+
+SRC_COMMON =	funk/header_funk.c \
+				funk/segment_funk.c \
+				funk/section_funk.c \
+				funk/nlist_funk.c \
+				macho.c \
+				file.c \
 				endian.c \
-				string.c \
 				log.c \
 
 SRC_NM = 		nm.c \
+				symbol_table.c \
 				$(SRC_COMMON)
 
 SRC_OTOOL =		otool.c \
@@ -38,45 +49,56 @@ SRC_OTOOL =		otool.c \
 OBJ_NM =	$(addprefix $(OBJ_DIR)/, $(SRC_NM:.c=.o))
 OBJ_OTOOL =	$(addprefix $(OBJ_DIR)/, $(SRC_OTOOL:.c=.o))
 
+DPD_NM = 	$(addprefix $(OBJ_DIR)/, $(SRC_NM:.c=.d))
+DPD_OTOOL =	$(addprefix $(OBJ_DIR)/, $(SRC_OTOOL:.c=.d))
+
 Y =		"\033[33m"
 B =		"\033[34m"
 M =		"\033[35m"
 X =		"\033[0m"
 UP =	"\033[A"
-CUT =	"\033[K"
+CUT =	"\033[2K"
 
 all:
+		@make -C $(LIBFT_DIR) all
 		@make -j $(FT_NM)
 		@make -j $(FT_OTOOL)
 
-debug\ $(FT_NM):
-		@make -j $(FT_NM) DEBUG=yes
-
-debug\ $(FT_OTOOL):
-		@make -j $(FT_OTOOL) DEBUG=yes
-
 debug:
-		@make -debug ft_nm
-		@make -debug ft_otool
+		@make -C $(LIBFT_DIR) all
+		@make $(FT_NM) DEBUG=yes
+		@make $(FT_OTOOL)
+
+$(CHILD_DIR):
+		@mkdir -p $(OBJ_DIR)/$@
 
 $(FT_NM): $(OBJ_NM)
-		@$(CC) $(FLAGS) -I $(INC_DIR) $^ -o $@
-		@echo ${B}[$(FT_NM)] compilation success
+		$(CC) $(FLAGS) -o $@ $(OBJ_NM) -L $(LIBFT_DIR) -lft
+		@echo ${B}[$(FT_NM)] compilation success${X}
 
 $(FT_OTOOL): $(OBJ_OTOOL)
-		@$(CC) $(FLAGS) -I $(INC_DIR) $^ -o $@
-		@echo ${Y}[$(FT_OTOOL)] compilation success
+		$(CC) $(FLAGS) -o $@ $(OBJ_OTOOL) -L $(LIBFT_DIR) -lft
+		@echo ${Y}[$(FT_OTOOL)] compilation success${X}
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-		@echo ${M}compiling [$@]...${X}
-		@mkdir -p $(OBJ_DIR)
-		@$(CC) $(FLAGS) -I $(INC_DIR) -c $< -o $@
-		@printf ${UP}${CUT}
+		@make $(CHILD_DIR)
+		@echo ${CUT} ${M}compiling [$@]...${X} ${UP}
+		$(CC) $(FLAGS) -I $(INC_DIR) -c $< -o $@ 
+
+norme:
+		@make norme -C $(LIBFT_DIR)
+		@echo
+		norminette ./$(INC_DIR)
+		@echo
+		norminette ./$(SRC_DIR)
 
 clean:
+		@make clean -C $(LIBFT_DIR)
 		@rm -rf $(OBJ_DIR)
 
-fclean: clean
+fclean:
+		@make fclean -C $(LIBFT_DIR)
+		@rm -rf $(OBJ_DIR)
 		@rm -f $(FT_NM)
 		@rm -f $(FT_OTOOL)
 
@@ -84,4 +106,7 @@ re:
 		@make fclean
 		@make
 
-.PHONY: all clean fclean re
+.PHONY: all debug norme clean fclean re
+
+-include $(DPD_NM)
+-include $(DPD_OTOOL)

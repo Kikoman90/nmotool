@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/02 11:09:55 by fsidler           #+#    #+#              #
-#    Updated: 2018/11/29 14:39:08 by fsidler          ###   ########.fr        #
+#    Updated: 2019/05/29 19:35:02 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ CC = clang
 
 NAME = libft.a
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -MMD
 
 DIR_SRCS = sources
 
@@ -47,17 +47,16 @@ SRCS = 	ft_bzero.c \
 		ft_strword.c \
 	  	ft_itoa.c \
 		ft_wordoffset.c \
-		ft_error.c \
-		ft_file.c \
-		ft_get_files.c \
 
 OBJS = $(addprefix $(DIR_OBJS)/, $(SRCS:.c=.o))
+DPDS = $(addprefix $(DIR_OBJS)/, $(SRCS:.c=.d))
 
 all: tmp $(NAME)
 
 $(NAME): $(OBJS)
 		@ar rc $(NAME) $(OBJS)
 		@ranlib $(NAME)
+		@echo "\033[37m[$(NAME)] compilation success"
 
 tmp:
 		@mkdir -p tmp
@@ -70,13 +69,15 @@ norme:
 		@echo
 		norminette ./$(DIR_SRCS)
 
-clean:		
+clean:
 		@rm -f $(OBJ)
 		@rm -rf $(DIR_OBJS)
 
-fclean:	clean	
+fclean:	clean
 		@rm -f $(NAME)
 
 re: fclean all
 
 .PHONY: all, tmp, norme, clean, fclean, re
+
+-include $(DPDS)

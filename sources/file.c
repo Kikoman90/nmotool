@@ -6,13 +6,13 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/01 14:26:55 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/28 16:03:10 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/05/29 21:01:10 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.h"
 
-static t_file_info file_info = { NULL, NULL };
+static t_file_info file_info = { NULL, 0, NULL };
 
 void	*get_safe(size_t offset, size_t size)
 {
