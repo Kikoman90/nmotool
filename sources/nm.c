@@ -61,28 +61,36 @@ static bool	manage_segment(size_t offset)
 	return (true);
 }
 
+static void	nm_print()
+
 static bool	manage_symtab(size_t offset)
 {
 	uint32_t				nsyms;
 	t_nlist					*ptr_nlist;
+	t_symbol_info			*symbols;
 	struct symtab_command	*ptr_symtab;
 	
 	if (!(ptr_symtab = get_safe(offset, sizeof(*ptr_symtab))))
-		return (log_error(ERR_FILE, "symtab command fetch failed", FROM));
+		return (log_error(ERR_FILE, "symtab command fetch failed, erroneous info", FROM));
 	nsyms = ptr_symtab->nsyms;
 	if (!push_bounds(ptr_symtab->symoff, nsyms * nlist_funk.size_of))
-		return (log_error(ERR_FILE, "failed to push bounds", FROM));
-	if (!(ptr_nlist = get_safe(0, nsyms * nlist_funk.size_of)))
-		return (log_error(ERR_FILE, "nlist array fetch failed", FROM));
+		return (log_error(ERR_THROW, "failed to push bounds", FROM));
+	if (!(ptr_nlist = get_safe(0, nsyms * nlist_funk.size_of, )))
+		return (log_error(ERR_FILE, "nlist fetch failed, erroneous info", FROM));
 	pop_bounds();
 	// string table : safe, bounds...
 	//
 	while (nsyms--)
 	{
-		//
-		
+		symbols[ = extract_nlist_symbol_info(nlist_funk.n_type(ptr_nlist), \
+			nlist_funk.n_sect(ptr_nlist), nlist_funk.n_desc(ptr_nlist), \
+			nlist_funk.n_value(ptr_nlist));
+		symbol.max_string_size
+		symbol.string
+		symbol.
 		ptr_nlist = (t_nlist*)((char*)ptr_nlist + nlist_funk.size_of);
 	}
+	nmprint(symbols, ptr_symtab->ptr_stroff + ptr_symtab->strsize);
 	return (true);
 }
 
@@ -91,7 +99,7 @@ bool		nm_agent(void)
 	uint32_t		ncmds;
 	t_mach_header	*ptr_header;
 
-	if (!(ptr_header = get_safe(0, hdr_funk.size_of)))
+	if (!(ptr_header = get_safe(0, hdr_funk.size_of, IN_WHOLE)))
 		return (log_error(ERR_FILE, "macho header fetch failed", FROM));
 	if (!push_bounds(hdr_funk.size_of, hdr_funk.sizeofcmds(ptr_header)))
 		return (log_error(ERR_THROW, "failed to set command bounds", FROM));

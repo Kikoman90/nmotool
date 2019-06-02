@@ -13,12 +13,12 @@
 #ifndef FUNK_H
 # define FUNK_H
 
-# include <unistd.h>
-
 // # include <mach-o/arch.h>
 # include <mach-o/loader.h>
 # include <mach-o/nlist.h>
 # include <mach-o/fat.h>
+
+# include "endianness.h"
 
 typedef union					u_mach_header
 {
@@ -94,11 +94,29 @@ typedef union					u_nlist
 typedef struct					s_nlist_funk
 {
 	size_t						size_of;
+	uint32_t					(*n_strx)(t_nlist *ptr_nlist);
+	uint8_t						(*n_type)(t_nlist *ptr_nlist);
+	uint8_t						(*n_sect)(t_nlist *ptr_nlist);
+	int16_t						(*n_desc)(t_nlist *ptr_nlist);
+	uint64_t					(*n_value)(t_nlist *ptr_nlist);
 }								t_nlist_funk;
 
 /*
-** funk/nlist_funk.c			=>
+** funk/nlist_funk1.c			=> 5 functions
 */
+uint32_t						n_strx32(t_nlist *ptr_nlist);
+uint8_t							n_type32(t_nlist *ptr_nlist);
+uint8_t							n_sect32(t_nlist *ptr_nlist);
+int16_t							n_desc32(t_nlist *ptr_nlist);
+uint64_t						n_value32(t_nlist *ptr_nlist);
 
+/*
+** funk/nlist_funk2.c			=> 5 functions
+*/
+uint32_t						n_strx64(t_nlist *ptr_nlist);
+uint8_t							n_type64(t_nlist *ptr_nlist);
+uint8_t							n_sect64(t_nlist *ptr_nlist);
+int16_t							n_desc64(t_nlist *ptr_nlist);
+uint64_t						n_value64(t_nlist *ptr_nlist);
 
 #endif

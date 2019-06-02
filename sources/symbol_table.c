@@ -12,6 +12,10 @@
 
 #include "nm.h"
 
+//
+#include <mach-o/stab.h>
+//
+
 static char section_type_table[255];
 
 void	add_section_type_table_entry(size_t offset)
@@ -34,3 +38,9 @@ void	add_section_type_table_entry(size_t offset)
 	else
 		section_type_table[section++] = 's';
 }
+
+void	extract_symbol_type(uint8_t type, uint8_t n_sect, uint16_t desc, uint64_t n_value)
+{
+
+}
+

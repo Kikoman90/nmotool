@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "common.h"
+#include "funk.h"
 
 uint32_t	ncmds32(t_mach_header *ptr_hdr)
 {

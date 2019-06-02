@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "common.h"
+#include "funk.h"
 
 uint32_t	cmdsize32(t_segment_command *ptr_cmd)
 {

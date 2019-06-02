@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "common.h"
+#include "funk.h"
 
 char		*sectname32(t_section *ptr_section)
 {
