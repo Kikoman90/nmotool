@@ -13,11 +13,7 @@
 #ifndef FUNK_H
 # define FUNK_H
 
-// # include <mach-o/arch.h>
-# include <mach-o/loader.h>
-# include <mach-o/nlist.h>
-# include <mach-o/fat.h>
-
+# include "maggie_mageek_moch_mach-includes_et_un_chewing_gum_gout_sauce_magi.h"
 # include "endianness.h"
 
 typedef union					u_mach_header
@@ -118,5 +114,29 @@ uint8_t							n_type64(t_nlist *ptr_nlist);
 uint8_t							n_sect64(t_nlist *ptr_nlist);
 int16_t							n_desc64(t_nlist *ptr_nlist);
 uint64_t						n_value64(t_nlist *ptr_nlist);
+
+typedef struct					s_funk
+{
+	t_header_funk				(*header)(void);
+	t_segment_funk				(*segment)(void);
+	t_section_funk				(*section)(void);
+	t_nlist_funk				(*nlist)(void);
+}								t_funk;
+
+/*
+** funk/funk1.c					=> 4 functions
+*/
+t_header_funk					header32(void);
+t_segment_funk					segment32(void);
+t_section_funk					section32(void);
+t_nlist_funk					nlist32(void);
+
+/*
+** funk/funk2.c					=> 4 functions
+*/
+t_header_funk					header64(void);
+t_segment_funk					segment64(void);
+t_section_funk					section64(void);
+t_nlist_funk					nlist64(void);
 
 #endif

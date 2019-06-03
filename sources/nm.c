@@ -15,33 +15,6 @@
 // flag handling
 // show usage in case of invalid flag or input
 
-static t_nlist_funk	nlist_funk;
-static t_segment_funk seg_funk;
-static t_header_funk hdr_funk;
-
-void		nm_funk(bool is_64)
-{
-	set_section_funk(is_64);
-	if (is_64)
-	{
-		hdr_funk = (t_header_funk)\
-			{ sizeof(struct mach_header_64), &ncmds64, &sizeofcmds64 };
-		seg_funk = (t_segment_funk)\
-			{ sizeof(struct segment_command_64), &cmdsize64, &nsects64, \
-				LC_SEGMENT_64 };
-		nlist_funk = (t_nlist_funk){ sizeof(struct nlist_64) };
-	}
-	else
-	{
-		hdr_funk = (t_header_funk)\
-			{ sizeof(struct mach_header), &ncmds32, &sizeofcmds32 };
-		seg_funk = (t_segment_funk)\
-			{ sizeof(struct segment_command), &cmdsize32, &nsects32, \
-				LC_SEGMENT };
-		nlist_funk = (t_nlist_funk){ sizeof(struct nlist) };
-	}
-}
-
 static bool	manage_segment(size_t offset)
 {
 	uint32_t			cmdsize;
@@ -60,8 +33,6 @@ static bool	manage_segment(size_t offset)
 	pop_bounds();
 	return (true);
 }
-
-static void	nm_print()
 
 static bool	manage_symtab(size_t offset)
 {
@@ -94,46 +65,54 @@ static bool	manage_symtab(size_t offset)
 	return (true);
 }
 
-bool		nm_agent(void)
+bool		nm_conductor(t_funk funk)
 {
 	uint32_t		ncmds;
+	t_header_funk	header_funk;
 	t_mach_header	*ptr_header;
 
-	if (!(ptr_header = get_safe(0, hdr_funk.size_of, IN_WHOLE)))
-		return (log_error(ERR_FILE, "macho header fetch failed", FROM));
-	if (!push_bounds(hdr_funk.size_of, hdr_funk.sizeofcmds(ptr_header)))
+	header_funk = funk.header();
+	if (!(ptr_header = get_safe(0, header_funk.size_of, MACHO)))
+		return (log_error(ERR_THROW, "failed to get macho header", FROM));
+	if (!push_bounds(header_funk.size_of, header_funk.sizeofcmds(ptr_header), TOP))
 		return (log_error(ERR_THROW, "failed to set command bounds", FROM));
-	ncmds = hdr_funk.ncmds(ptr_header);
-	if (!iterate_load_commands(ncmds, seg_funk.type_of, &manage_segment))
-		return (log_error(ERR_THROW, "failed to iterate over segment commands", FROM));
+	ncmds = header_funk.ncmds(ptr_header);
+	if (!iterate_load_commands(ncmds, funk.segment().type_of, &manage_segment))
+		return (log_error(ERR_THROW, "failed to iterate over segments", FROM));
 	if (!iterate_load_commands(ncmds, LC_SYMTAB, &manage_symtab))
-		return (log_error(ERR_THROW, "failed to iterate over symtab commands", FROM));
-	pop_bounds();
+		return (log_error(ERR_THROW, "failed to iterate over symtabs", FROM));
+	pop_bounds(TOP);
 	return (true);
 }
 
 int			main(int argc, char **argv)
 {
+	int	ret;
+
+	ret = 1;
 	if (argc < 2)
 	{
-		if (!extract_macho(DEFAULT_TARGET, &nm_agent, &nm_funk))
-			return (EXIT_FAILURE);
+		if (!play_macho(DEFAULT_TARGET, &nm_conductor))
+			ret = log_error(ERR_THROW, "nm failure", FROM);
+		return (ret);
 	}
 	while (*++argv)
 	{
 		if (**argv == '-')
 		{
+			;
 			//if (!nm_set_flag(*argv))
-				return (EXIT_FAILURE);
+				//ret = log_error(ERR_THROW...)
 		}
 		else
 		{
-			ft_putchar('\n');
-			ft_putstr(*argv);
-			ft_putstr(":\n");
-			if (!extract_macho(*argv, &nm_agent, &nm_funk))
-				return (EXIT_FAILURE);
+			ft_putstr(*argv); //
+			ft_putstr(":\n"); //
+			if (!play_macho(*argv, &nm_conductor))
+				ret = log_error(ERR_THROW, "nm failure", FROM);
+			ft_putchar('\n'); //
+
 		}
 	}
-	return (EXIT_SUCCESS);
+	return (ret);
 }

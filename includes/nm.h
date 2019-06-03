@@ -15,8 +15,6 @@
 
 # include "common.h"
 
-
-
 /*
 ** symbol_table.c	=> 1 function
 */

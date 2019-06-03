@@ -30,7 +30,6 @@ void	*get_safe(size_t offset, size_t size, t_boxgrade grade)
 	return (log_error(ERR_THROW, "bad grade !", FROM));
 }
 
-
 void	pop_bounds(t_boxgrade grade)
 {
 	struct s_bbox	*pop;
@@ -80,50 +79,41 @@ bool	push_bounds(size_t offset, size_t size, t_boxgrade grade)
 	return (log_error(ERR_THROW, "bad grade !", FROM));
 }
 
-// cleanup required
-bool	load_file(char const *path)
+bool		unload_file(void)
 {
-	int			fd;
-	struct stat	file_stat;
-
-	if ((fd = open(path, O_RDONLY)) == -1)
-		return (log_error(ERR_FILE, strerror(errno), FROM));
-	if (fstat(fd, &file_stat) == -1)
+	if (file_info.ptr && file_info.ptr != MAP_FAILED && FILE_BOUNDS)
 	{
-		close(fd); // close can fail
-		return (log_error(ERR_FILE, strerror(errno), FROM));
+		if (munmap(file_info.ptr, FILE_BOUNDS->size) == -1)
+		{
+			pop_bounds(FILE);
+			return (log_error(ERR_MUNMAP, strerror(errno), FROM));
+		}
+		file_info.ptr = NULL;
 	}
-	// check (file_stat.st_mode & S_IFDIR) -> is directory !
-	if (file_stat.st_size <= 0)
-	{
-		close(fd); // close can fail
-		return (log_error(ERR_FILE, "invalid size", FROM));
-	}
-	if (!push_bounds(FILE, 0, (size_t)file_stat.st_size))
-	{
-		close(fd); // close can fail
-		return (log_error(ERR_THROW, "failed to set file boundaries", FROM));
-	}
-	if ((file_info.ptr = mmap(NULL, (size_t)file_stat.st_size, \
-		PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
-	{
-		close(fd); // close can fail
-		return (log_error(ERR_MMAP, strerror(errno), FROM));
-	}
-	close(fd); // close can fail
+	pop_bounds(FILE);
 	return (true);
 }
 
-// cleanup required
-bool	unload_file(void)
+bool		load_file(char const *path)
 {
-	if (file_info.ptr && file_info.ptr != MAP_FAILED)
-	{
-		if (munmap(file_info.ptr, file_info.file->size) == -1)
-			return (log_error(ERR_MUNMAP, strerror(errno), FROM));
-		file_info.ptr = NULL;
-	}
-	while (file_info.boundaries)
-		pop_bounds();
-	return (true);
+	int			fd;
+	bool		ret;
+	struct stat	file_stat;
+
+	ret = true;
+	if ((fd = open(path, O_RDONLY)) == -1)
+		return (log_error(ERR_FILE, strerror(errno), FROM));
+	if (fstat(fd, &file_stat) == -1)
+		ret = log_error(ERR_FILE, strerror(errno), FROM);
+	else if (file_stat.st_mode & S_IFDIR)
+		ret = log_error(ERR_FILE, "parameter must not be a directory", FROM);
+	else if (file_stat.st_size <= 0)
+		ret = log_error(ERR_FILE, "invalid file size", FROM);
+	else if (!push_bounds(0, (size_t)file_stat.st_size, FILE))
+		ret = log_error(ERR_THROW, "failed to set file boundaries", FROM);
+	else if ((file_info.ptr = mmap(NULL, (size_t)file_stat.st_size, \
+		PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
+		ret = log_error(ERR_MMAP, strerror(errno), FROM);
+	return ((close(fd) == -1) ? \
+		log_error(ERR_FILE, strerror(errno), FROM) : ret);
 }

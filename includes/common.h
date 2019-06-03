@@ -13,27 +13,25 @@
 #ifndef COMMON_H
 # define COMMON_H
 
-# include <ar.h> //fat_arch32/64
-
 # include "fileinf.h"
 # include "funk.h"
 
 # define DEFAULT_TARGET "a.out"
 
-typedef bool	(*t_agent)(void);
-typedef void	(*t_funk)(bool);
-typedef void	(*t_section_manager)(size_t);
-typedef bool	(*t_lc_manager)(size_t);
+typedef bool	(*t_conductor)(void);
+typedef bool	(*t_command_op)(size_t);
+typedef void	(*t_section_op)(size_t);
 
 /*
-** macho.c		=> 5 functions
+** machop.c		=> 4 functions
 */
-void			set_section_funk(bool is_64);
-bool			iterate_load_commands(uint32_t ncmds, uint32_t target, \
-					t_lc_manager funk);
-bool			iterate_sections(uint32_t nsects, char const *sectname_target, \
-					char const *segname_target, t_section_manager funk);
-bool			extract_macho(char const *filepath, t_agent agent, t_funk funk);
+bool						iterate_load_commands(uint32_t ncmds, \
+								uint32_t target, t_command_op opera);
+bool						iterate_sections(uint32_t nsects, \
+								char const *target[2], t_section_funk funk, \
+								t_section_op opera);
+bool						machopera(size_t dist, size_t length, t_conductor ctor);
+bool						play_macho(char const *filepath, t_conductor ctor);
 
 
 #endif
