@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/05/29 21:04:30 by fsidler          ###   ########.fr        #
+#    Updated: 2019/06/04 15:56:47 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,14 +30,18 @@ OBJ_DIR =	objs
 
 CHILD_DIR = funk
 
-SRC_COMMON =	funk/header_funk.c \
+SRC_COMMON =	funk/fat_arch_funk.c \
+				funk/header_funk.c \
 				funk/segment_funk.c \
 				funk/section_funk.c \
-				funk/nlist_funk.c \
-				macho.c \
-				file.c \
-				endian.c \
-				log.c \
+				funk/nlist_funk1.c \
+				funk/nlist_funk2.c \
+				funk/funk1.c \
+				funk/funk2.c \
+				machop.c \
+				fileinf.c \
+				endianness.c \
+				logger.c \
 
 SRC_NM = 		nm.c \
 				symbol_table.c \

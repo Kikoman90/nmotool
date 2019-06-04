@@ -1,100 +1,111 @@
-// 42 header //
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fileinf.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/04 14:19:10 by fsidler           #+#    #+#             */
+/*   Updated: 2019/06/04 17:02:02 by fsidler          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "fileinf.h"
 
-static t_file_info file_info = { NULL, { NULL, NULL, NULL } };
+static t_file_info g_file_info = { NULL, { NULL, NULL, NULL } };
 
-void	*get_safe(size_t offset, size_t size, t_boxgrade grade)
+void	*get_safe(size_t offset, size_t size, t_bounds_target b_target)
 {
-	struct s_bbox	*bbox;
+	struct s_bounds	*bounds;
 
 	if (offset + size < offset)
 		return (NULL);
-	if (GGRADE(grade))
+	if (VALID_BT(b_target))
 	{
-		if (!(bbox = file_info.boundaries[grade]))
-			return (log_error(ERR_THROW, \
-				"provided bounds are invalid", FROM));
-		if (offset + size > bbox->size)
-			return (log_error(ERR_THROW, \
-				"requested pointer out of bounds", FROM));
-		while (bbox)
+		if (!(bounds = g_file_info.bounds[b_target]))
+			return (log_error_null(ERR_THROW, "invalid target bounds", FROM));
+		if (offset + size > bounds->size)
+			return (log_error_null(ERR_THROW, "pointer out of bounds", FROM));
+		while (bounds)
 		{
-			if (offset + bbox->offset < offset)
+			if (offset + bounds->offset < offset)
 				return (NULL);
-			offset += bbox->offset;
-			bbox = bbox->next;
+			offset += bounds->offset;
+			bounds = bounds->next;
 		}
-		return ((void*)(file_info.ptr + offset));
+		return ((void*)(g_file_info.ptr + offset));
 	}
-	return (log_error(ERR_THROW, "bad grade !", FROM));
+	return (log_error_null(ERR_THROW, "invalid bounds target !", FROM));
 }
 
-void	pop_bounds(t_boxgrade grade)
+void	pop_bounds(t_bounds_target b_target)
 {
-	struct s_bbox	*pop;
+	struct s_bounds	*pop;
 
-	if (GGRADE(grade) && (pop = file_info.bounds[grade]))
+	pop = NULL;
+	if (VALID_BT(b_target) && (pop = g_file_info.bounds[b_target]) != NULL)
 	{
-		if (grade == TOP)
+		if (b_target == BT_TOP)
 			TOP_BOUNDS = (pop->next != MACHO_BOUNDS) ? pop->next : NULL;
-		else if (grade == MACHO)
+		else if (b_target == BT_MACHO)
 		{
 			while (TOP_BOUNDS)
-				pop_bounds(TOP);
+				pop_bounds(BT_TOP);
 			MACHO_BOUNDS = NULL;
 		}
-		else if (grade == FILE)
+		else if (b_target == BT_FILE)
 		{
-			pop_bounds(MACHO);
+			pop_bounds(BT_MACHO);
 			FILE_BOUNDS = NULL;
 		}
 		free(pop);
 	}
 }
 
-bool	push_bounds(size_t offset, size_t size, t_boxgrade grade)
+bool	push_bounds(size_t offset, size_t size, t_bounds_target b_target)
 {
-	struct s_bbox	*newt, next;
+	struct s_bounds	*newt;
+	struct s_bounds	*next;
 
 	if (offset + size < offset)
 		return (NULL);
-	if (GGRADE(grade))
+	if (VALID_BT(b_target))
 	{
-		if ((grade == TOP && !MACHO_BOUNDS) || (grade == MACHO && !FILE_BOUNDS))
-			return (log_error(ERR_THROW, "missing file or macho bounds !"));
-		if ((next = file_info.bbounds[grade]->next) \
+		if ((b_target == BT_TOP && !MACHO_BOUNDS) \
+			|| (b_target == BT_MACHO && !FILE_BOUNDS))
+			return (log_error(ERR_THROW, "missing file or macho bounds", FROM));
+		if ((next = g_file_info.bounds[b_target]->next) \
 			&& offset + size > next->size)
 			return (log_error(ERR_THROW, "invalid bounds", FROM));
-		if (!(newt = (struct s_bbox*)malloc(sizeof(*newt))))
+		if (!(newt = (struct s_bounds*)malloc(sizeof(*newt))))
 			return (log_error(ERR_MALLOC, strerror(errno), FROM));
 		newt->offset = offset;
 		newt->size = size;
 		newt->next = next;
-		if (grade != TOP)
-			pop_bounds(grade);
-		file_info.bbounds[grade] = newt;
+		if (b_target != BT_TOP)
+			pop_bounds(b_target);
+		g_file_info.bounds[b_target] = newt;
 		return (true);
 	}
-	return (log_error(ERR_THROW, "bad grade !", FROM));
+	return (log_error(ERR_THROW, "invalid bounds target !", FROM));
 }
 
-bool		unload_file(void)
+bool	unload_file(void)
 {
-	if (file_info.ptr && file_info.ptr != MAP_FAILED && FILE_BOUNDS)
+	if (g_file_info.ptr && g_file_info.ptr != MAP_FAILED && FILE_BOUNDS)
 	{
-		if (munmap(file_info.ptr, FILE_BOUNDS->size) == -1)
+		if (munmap(g_file_info.ptr, FILE_BOUNDS->size) == -1)
 		{
-			pop_bounds(FILE);
+			pop_bounds(BT_FILE);
 			return (log_error(ERR_MUNMAP, strerror(errno), FROM));
 		}
-		file_info.ptr = NULL;
+		g_file_info.ptr = NULL;
 	}
-	pop_bounds(FILE);
+	pop_bounds(BT_FILE);
 	return (true);
 }
 
-bool		load_file(char const *path)
+bool	load_file(char const *path, size_t *ptr_filesize)
 {
 	int			fd;
 	bool		ret;
@@ -109,11 +120,15 @@ bool		load_file(char const *path)
 		ret = log_error(ERR_FILE, "parameter must not be a directory", FROM);
 	else if (file_stat.st_size <= 0)
 		ret = log_error(ERR_FILE, "invalid file size", FROM);
-	else if (!push_bounds(0, (size_t)file_stat.st_size, FILE))
-		ret = log_error(ERR_THROW, "failed to set file boundaries", FROM);
-	else if ((file_info.ptr = mmap(NULL, (size_t)file_stat.st_size, \
-		PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
-		ret = log_error(ERR_MMAP, strerror(errno), FROM);
+	else
+	{
+		*ptr_filesize = (size_t)file_stat.st_size;
+		if (!push_bounds(0, *ptr_filesize, BT_FILE))
+			ret = log_error(ERR_THROW, "failed to set file boundaries", FROM);
+		else if ((g_file_info.ptr = mmap(NULL, *ptr_filesize, \
+			PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
+			ret = log_error(ERR_MMAP, strerror(errno), FROM);
+	}
 	return ((close(fd) == -1) ? \
 		log_error(ERR_FILE, strerror(errno), FROM) : ret);
 }

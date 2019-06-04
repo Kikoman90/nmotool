@@ -1,30 +1,33 @@
-// 42 header //
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   logger.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/04 16:55:08 by fsidler           #+#    #+#             */
+/*   Updated: 2019/06/04 18:45:46 by fsidler          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "logger.h"
 
-static char const indent_ch = '\t';
-
-static char	const *err_map[ERR_N] = {
-	"[invalid file] ",
-	"[mmap failure] ",
-	"[munmap failure] ",
-	"[malloc failure] ",
-	""
-};
-
-char	*log_from(char const *file, char const *func, uint32_t line)
+char		*log_from(char const *file, char const *func, uint32_t line)
 {
 	return ((NMO_DEBUG) ? ft_strjoin_rf("{", \
 		ft_strjoin_rf(file, \
 		ft_strjoin_rf(":", \
 		ft_strjoin_rf(func, \
 		ft_strjoin_rf(":", \
-		ft_strjoin_lf(ft_itoa(line), "} "))))))	: NULL);
+		ft_strjoin_lf(ft_itoa(line), "} ")))))) : NULL);
 }
 
-bool	log_error(enum e_error_type type, char const *err, char *from)
+static void	log_display(t_error_type type, char const *err, char *from)
 {
-	static uint32_t indent_level = 0;
+	static uint32_t				indent_level = 0;
+	static char const			indent_ch = '\t';
+	static char const *const	err_map[ERR_N] = { "[invalid file] ", \
+		"[mmap failure] ", "[munmap failure] ", "[malloc failure] ", "" };
 
 	if (type < ERR_THROW)
 	{
@@ -45,5 +48,16 @@ bool	log_error(enum e_error_type type, char const *err, char *from)
 	if (err)
 		ft_putstr_fd(2, err);
 	ft_putstr_fd(2, "\n");
+}
+
+bool		log_error(t_error_type type, char const *err, char *from)
+{
+	log_display(type, err, from);
 	return (false);
+}
+
+void		*log_error_null(t_error_type type, char const *err, char *from)
+{
+	log_display(type, err, from);
+	return (NULL);
 }

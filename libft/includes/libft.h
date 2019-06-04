@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/01 13:21:24 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/29 18:05:48 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/04 18:25:14 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ char				*ft_strchr(const char *str, int c, int inc);
 char				*ft_strnchr(const char *str, int c, int n, int inc);
 char				*ft_strrchr(const char *str, int c);
 char				*ft_strcpy(char *dest, const char *src);
+char				*ft_strncpy(char *dest, const char *src, size_t n);
 char				*ft_strdup(const char *str);
 
 size_t				ft_strlen(const char *str);

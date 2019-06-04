@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/14 19:21:53 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/29 21:01:20 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/04 17:05:55 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,73 +15,78 @@
 // flag handling
 // show usage in case of invalid flag or input
 
-static bool	manage_segment(size_t offset)
+static bool	manage_segment(size_t offset, t_funk funk)
 {
-	uint32_t			cmdsize;
-	t_segment_command	*ptr_segment_cmd;
+	uint32_t				cmdsize;
+	t_segment_funk			segment_funk;
+	t_segment_command const	*ptr_segment_cmd;
 
-	if (!(ptr_segment_cmd = get_safe(offset, seg_funk.size_of)))
+	if (!(ptr_segment_cmd = get_safe(offset, segment_funk.size_of, BT_TOP)))
 		return (log_error(ERR_FILE, "segment command fetch failed", FROM));
-	cmdsize = seg_funk.cmdsize(ptr_segment_cmd);
-	if (cmdsize < seg_funk.size_of)
+	cmdsize = segment_funk.cmdsize(ptr_segment_cmd);
+	if (cmdsize < segment_funk.size_of)
 		return (log_error(ERR_FILE, "size of segment is invalid", FROM));
-	if (!push_bounds(get_current_offset() + offset + seg_funk.size_of, \
-		cmdsize - seg_funk.size_of))
+	if (!push_bounds(offset + segment_funk.size_of, \
+		cmdsize - segment_funk.size_of, BT_TOP))
 		return (log_error(ERR_THROW, "failed to push bounds", FROM));
-	if (!iterate_sections(seg_funk.nsects(ptr_segment_cmd), NULL, NULL, &add_section_type_table_entry))
+	if (!iterate_sections(segment_funk.nsects(ptr_segment_cmd), \
+		(char const *[2]){ NULL, NULL }, funk.section(), &add_section_type_table_entry))
 		return (log_error(ERR_THROW, "failed to iterate over sections", FROM));
-	pop_bounds();
+	pop_bounds(BT_TOP);
 	return (true);
 }
 
-static bool	manage_symtab(size_t offset)
+static bool	manage_symtab(size_t offset, t_funk funk)
 {
-	uint32_t				nsyms;
-	t_nlist					*ptr_nlist;
-	t_symbol_info			*symbols;
-	struct symtab_command	*ptr_symtab;
+	uint32_t					nsyms;
+	t_nlist_funk				nlist_funk;
+	t_nlist const				*ptr_nlist;
+	struct symtab_command const	*ptr_symtab;
+	// t_symbol_info			*symbols;
 	
-	if (!(ptr_symtab = get_safe(offset, sizeof(*ptr_symtab))))
-		return (log_error(ERR_FILE, "symtab command fetch failed, erroneous info", FROM));
+	nlist_funk = funk.nlist();
+	if (!(ptr_symtab = get_safe(offset, sizeof(*ptr_symtab), BT_TOP)))
+		return (log_error(ERR_FILE, "failed to get symtab command", FROM));
 	nsyms = ptr_symtab->nsyms;
-	if (!push_bounds(ptr_symtab->symoff, nsyms * nlist_funk.size_of))
-		return (log_error(ERR_THROW, "failed to push bounds", FROM));
-	if (!(ptr_nlist = get_safe(0, nsyms * nlist_funk.size_of, )))
-		return (log_error(ERR_FILE, "nlist fetch failed, erroneous info", FROM));
-	pop_bounds();
+	if (!(ptr_nlist = get_safe(ptr_symtab->symoff, \
+		nsyms * nlist_funk.size_of, BT_MACHO))) // symoff relative to MACHO or to FILE ??
+		return (log_error(ERR_FILE, "failed to get nlist array", FROM));
 	// string table : safe, bounds...
+	printf("nsyms = %ui\n", nsyms);
 	//
 	while (nsyms--)
 	{
-		symbols[ = extract_nlist_symbol_info(nlist_funk.n_type(ptr_nlist), \
+		/*symbols[ = extract_nlist_symbol_info(nlist_funk.n_type(ptr_nlist), \
 			nlist_funk.n_sect(ptr_nlist), nlist_funk.n_desc(ptr_nlist), \
 			nlist_funk.n_value(ptr_nlist));
 		symbol.max_string_size
 		symbol.string
-		symbol.
+		symbol.*/
 		ptr_nlist = (t_nlist*)((char*)ptr_nlist + nlist_funk.size_of);
 	}
-	nmprint(symbols, ptr_symtab->ptr_stroff + ptr_symtab->strsize);
+	//nmprint(symbols, ptr_symtab->stroff + ptr_symtab->strsize);
 	return (true);
 }
 
-bool		nm_conductor(t_funk funk)
+static bool	nm_conductor(t_funk funk)
 {
-	uint32_t		ncmds;
-	t_header_funk	header_funk;
-	t_mach_header	*ptr_header;
+	uint32_t			ncmds;
+	t_header_funk		header_funk;
+	t_mach_header const	*ptr_header;
 
 	header_funk = funk.header();
-	if (!(ptr_header = get_safe(0, header_funk.size_of, MACHO)))
+	if (!(ptr_header = get_safe(0, header_funk.size_of, BT_MACHO)))
 		return (log_error(ERR_THROW, "failed to get macho header", FROM));
-	if (!push_bounds(header_funk.size_of, header_funk.sizeofcmds(ptr_header), TOP))
+	if (!push_bounds(header_funk.size_of, \
+		header_funk.sizeofcmds(ptr_header), BT_TOP))
 		return (log_error(ERR_THROW, "failed to set command bounds", FROM));
 	ncmds = header_funk.ncmds(ptr_header);
-	if (!iterate_load_commands(ncmds, funk.segment().type_of, &manage_segment))
+	if (!iterate_load_commands(ncmds, funk.segment().type_of, funk, \
+		&manage_segment))
 		return (log_error(ERR_THROW, "failed to iterate over segments", FROM));
-	if (!iterate_load_commands(ncmds, LC_SYMTAB, &manage_symtab))
+	if (!iterate_load_commands(ncmds, LC_SYMTAB, funk, &manage_symtab))
 		return (log_error(ERR_THROW, "failed to iterate over symtabs", FROM));
-	pop_bounds(TOP);
+	pop_bounds(BT_TOP);
 	return (true);
 }
 

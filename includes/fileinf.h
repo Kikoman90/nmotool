@@ -1,4 +1,14 @@
-// 42 header //
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fileinf.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/04 14:28:36 by fsidler           #+#    #+#             */
+/*   Updated: 2019/06/04 16:38:18 by fsidler          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef FILEINF_H
 # define FILEINF_H
@@ -12,35 +22,34 @@
 
 typedef struct			s_file_info {
 	unsigned char		*ptr;
-	struct				s_bbox
-	{
+	struct				s_bounds {
 		size_t			offset;
 		size_t			size;
-		struct s_bbox	*next;
-	};					*bbounds[3];
+		struct s_bounds	*next;
+	}					*bounds[3];
 }						t_file_info;
 
-typedef enum			s_boxgrade
-{
-	FILE = 0,
-	MACHO = 1,
-	TOP = 2
-}						t_boxgrade;
+typedef enum			e_bounds_target {
+	BT_FILE = 0,
+	BT_MACHO = 1,
+	BT_TOP = 2
+}						t_bounds_target;
 
-# define GGRADE(gg)		(gg == FILE || gg == MACHO || gg == TOP) ? 1 : 0;
+# define VALID_BT(t)	(t == BT_FILE || t == BT_MACHO || t == BT_TOP) ? 1 : 0
 
-# define FILE_BOUNDS	file_info.bbounds[FILE]
-# define MACHO_BOUNDS	file_info.bbounds[MACHO]
-# define TOP_BOUNDS		file_info.bbounds[TOP]
+# define FILE_BOUNDS	g_file_info.bounds[BT_FILE]
+# define MACHO_BOUNDS	g_file_info.bounds[BT_MACHO]
+# define TOP_BOUNDS		g_file_info.bounds[BT_TOP]
 
 /*
 ** file_inf.c			=> 5 functions
 */
-void					*get_safe(size_t offset, size_t size, t_boxgrade grade);
-void					pop_bounds(t_boxgrade grade);
+void					*get_safe(size_t offset, size_t size, \
+							t_bounds_target b_target);
+void					pop_bounds(t_bounds_target b_target);
 bool					push_bounds(size_t offset, size_t size, \
-							t_boxgrade grade);
+							t_bounds_target b_target);
 bool					unload_file(void);
-bool					load_file(char const *path);
+bool					load_file(char const *path, size_t *ptr_filesize);
 
 #endif

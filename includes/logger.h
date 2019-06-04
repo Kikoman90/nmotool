@@ -1,4 +1,14 @@
-// 42 header //
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   logger.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/04 16:55:13 by fsidler           #+#    #+#             */
+/*   Updated: 2019/06/04 17:11:14 by fsidler          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef LOGGER_H
 # define LOGGER_H
@@ -24,9 +34,10 @@ typedef enum	e_error_type {
 }				t_error_type;
 
 /*
-** logger.c		=> 2 function
+** logger.c		=> 4 functions
 */
 char			*log_from(char const *file, char const *func, uint32_t line);
-bool			log_error(enum e_error_type type, char const *err, char *from);
+bool			log_error(t_error_type type, char const *err, char *from);
+void			*log_error_null(t_error_type type, char const *err, char *from);
 
 #endif

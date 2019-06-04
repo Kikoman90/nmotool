@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/28 19:40:08 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/29 17:09:32 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/04 19:23:02 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	add_section_type_table_entry(size_t offset)
 		ft_bzero(section_type_table, 255);
 		section = 0;
 	}
-	sectname = get_safe(offset, 16);
+	sectname = get_safe(offset, 16, BT_TOP);
 	if (strcmp(sectname, "__text"))
 		section_type_table[section++] = 't';
 	else if (strcmp(sectname, "__data"))
@@ -39,8 +39,12 @@ void	add_section_type_table_entry(size_t offset)
 		section_type_table[section++] = 's';
 }
 
-void	extract_symbol_type(uint8_t type, uint8_t n_sect, uint16_t desc, uint64_t n_value)
+void	extract_symbol_type(uint8_t n_type, uint8_t n_sect, uint16_t n_desc, \
+	uint64_t n_value)
 {
-
+	(void)n_type;
+	(void)n_sect;
+	(void)n_desc;
+	(void)n_value;
 }
 

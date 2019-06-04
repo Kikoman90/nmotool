@@ -1,6 +1,21 @@
-// 42 header //
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   funk1.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/06/04 15:22:32 by fsidler           #+#    #+#             */
+/*   Updated: 2019/06/04 18:21:18 by fsidler          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "funk.h"
+
+t_fat_arch_funk	fat32(void)
+{
+	return ((t_fat_arch_funk){ sizeof(struct fat_arch), &offset32, &size32 });
+}
 
 t_header_funk	header32(void)
 {
@@ -17,10 +32,11 @@ t_segment_funk	segment32(void)
 t_section_funk	section32(void)
 {
 	return ((t_section_funk)\
-		{ sizeof(struct section), &sectname32, &segname32 });
+		{ sizeof(struct section), &get_sectname32, &get_segname32 });
 }
 
 t_nlist_funk	nlist32(void)
 {
-	return ((t_nlist_funk){ sizeof(struct nlist) });
+	return ((t_nlist_funk){ sizeof(struct nlist), &n_strx32, &n_type32, \
+		&n_sect32, &n_desc32, &n_value32 });
 }
