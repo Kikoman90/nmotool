@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/02 11:09:55 by fsidler           #+#    #+#              #
-#    Updated: 2019/05/29 19:35:02 by fsidler          ###   ########.fr        #
+#    Updated: 2019/06/05 18:43:07 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,35 +18,22 @@ CFLAGS = -Wall -Wextra -Werror -MMD
 
 DIR_SRCS = sources
 
-DIR_OBJS = tmp
+DIR_OBJS = objs
 
 HEADERS = includes
 
-SRCS = 	ft_bzero.c \
-		ft_isblank.c \
-  		ft_isdigit.c \
-	  	ft_atoi.c \
-		ft_atof_f.c \
-		ft_clamp.c \
-	  	ft_strcmp.c \
-	  	ft_strcat.c \
-	  	ft_strchr.c \
-	  	ft_strrchr.c \
-	  	ft_strcpy.c \
-	  	ft_strdup.c \
-	  	ft_strlen.c \
+SRCS = 	ft_toupper.c \
+		ft_strlen.c \
+		ft_bzero.c \
+		ft_itoa.c \
+		ft_strnew.c \
+		ft_strcat.c \
+		ft_strcpy.c \
 		ft_putchar.c \
 		ft_putstr.c \
 	  	ft_putendl.c \
-	  	ft_strnew.c \
-	  	ft_strsub.c \
 	  	ft_strjoin.c \
-		ft_strjoin_bf.c \
-		ft_strjoin_lf.c \
-		ft_strjoin_rf.c \
-		ft_strword.c \
-	  	ft_itoa.c \
-		ft_wordoffset.c \
+		ft_strcmp.c \
 
 OBJS = $(addprefix $(DIR_OBJS)/, $(SRCS:.c=.o))
 DPDS = $(addprefix $(DIR_OBJS)/, $(SRCS:.c=.d))
@@ -59,7 +46,7 @@ $(NAME): $(OBJS)
 		@echo "\033[37m[$(NAME)] compilation success"
 
 tmp:
-		@mkdir -p tmp
+		@mkdir -p $(DIR_OBJS)
 
 $(DIR_OBJS)/%.o: $(DIR_SRCS)/%.c
 		@$(CC) $(CFLAGS) -I $(HEADERS) -c $< -o $@

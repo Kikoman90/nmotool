@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/24 16:02:42 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/04 18:30:42 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/05 18:48:11 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,6 @@
 
 # include "fileinf.h"
 # include "funk.h"
-
-//
-# include <stdio.h>
-//
 
 # define DEFAULT_TARGET "a.out"
 

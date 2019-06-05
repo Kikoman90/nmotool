@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:56:51 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/04 18:50:11 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/05 18:49:22 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,6 @@ bool	iterate_sections(uint32_t nsects, char const *names[2], \
 	return (true);
 }
 
-/*
-** funk = ((length = MAGIC_IS_64(*ptr_magic))) ?
-*/
 bool	machopera(size_t dist, size_t length, t_conductor ctor)
 {
 	bool			ret;
@@ -75,7 +72,7 @@ bool	machopera(size_t dist, size_t length, t_conductor ctor)
 		funk = (length) ? \
 			(t_funk){ &fat64, &header64, &segment64, &section64, &nlist64 } : \
 			(t_funk){ &fat32, &header32, &segment32, &section32, &nlist32 };
-		if (*ptr_magic == ARMAG)
+		if (*ptr_magic == 9090) //ARMAG
 			ret = false;
 		else if (*ptr_magic == (dist ? FAT_CIGAM_(length) : FAT_MAGIC_(length)))
 			ret = false;

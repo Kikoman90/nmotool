@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/14 19:21:53 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/04 17:05:55 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/05 17:47:55 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static bool	manage_segment(size_t offset, t_funk funk)
 	t_segment_funk			segment_funk;
 	t_segment_command const	*ptr_segment_cmd;
 
+	segment_funk = funk.segment();
 	if (!(ptr_segment_cmd = get_safe(offset, segment_funk.size_of, BT_TOP)))
 		return (log_error(ERR_FILE, "segment command fetch failed", FROM));
 	cmdsize = segment_funk.cmdsize(ptr_segment_cmd);
@@ -52,16 +53,34 @@ static bool	manage_symtab(size_t offset, t_funk funk)
 		nsyms * nlist_funk.size_of, BT_MACHO))) // symoff relative to MACHO or to FILE ??
 		return (log_error(ERR_FILE, "failed to get nlist array", FROM));
 	// string table : safe, bounds...
-	printf("nsyms = %ui\n", nsyms);
+	//printf("nsyms = %u\n", nsyms);
 	//
 	while (nsyms--)
 	{
-		/*symbols[ = extract_nlist_symbol_info(nlist_funk.n_type(ptr_nlist), \
+		char type = extract_symbol_type(nlist_funk.n_type(ptr_nlist), \
 			nlist_funk.n_sect(ptr_nlist), nlist_funk.n_desc(ptr_nlist), \
 			nlist_funk.n_value(ptr_nlist));
-		symbol.max_string_size
-		symbol.string
-		symbol.*/
+		uint32_t n_strx = nlist_funk.n_strx(ptr_nlist);
+		uint32_t max_size;
+		if (n_strx > ptr_symtab->strsize)
+			return (log_error(ERR_THROW, "invalid offset mofo", FROM));
+		if ((max_size = ptr_symtab->strsize - n_strx) > ptr_symtab->strsize)
+			return (log_error(ERR_THROW, "don't test me", FROM));
+		char const *string;
+		if (ptr_symtab->stroff + n_strx < ptr_symtab->stroff) // unsigned int reset 
+			return (log_error(ERR_THROW, "WUT", FROM));
+		if (!(string = get_safe(ptr_symtab->stroff + n_strx, max_size, BT_FILE)))
+			return (log_error(ERR_THROW, "this bs", FROM));
+		uint64_t offset = nlist_funk.n_value(ptr_nlist);
+		if (offset || !(type == 'u' || type == 'U'))
+			print_hexa_address(offset, 16); // base : 16
+		else
+			ft_putnchar(' ', 16);
+		ft_putchar(' ');
+		ft_putchar(type);
+		ft_putchar(' ');
+		ft_putnstr(string, max_size);
+		ft_putchar('\n');
 		ptr_nlist = (t_nlist*)((char*)ptr_nlist + nlist_funk.size_of);
 	}
 	//nmprint(symbols, ptr_symtab->stroff + ptr_symtab->strsize);
@@ -81,11 +100,16 @@ static bool	nm_conductor(t_funk funk)
 		header_funk.sizeofcmds(ptr_header), BT_TOP))
 		return (log_error(ERR_THROW, "failed to set command bounds", FROM));
 	ncmds = header_funk.ncmds(ptr_header);
+	//printf("BEFORE ITERATE_SEG\n");
+	reset_section_type_table();
 	if (!iterate_load_commands(ncmds, funk.segment().type_of, funk, \
 		&manage_segment))
 		return (log_error(ERR_THROW, "failed to iterate over segments", FROM));
+	//printf("AFTER ITERATE_SEG\n");
+	//printf("BEFORE ITERATE_SYM\n");
 	if (!iterate_load_commands(ncmds, LC_SYMTAB, funk, &manage_symtab))
 		return (log_error(ERR_THROW, "failed to iterate over symtabs", FROM));
+	//printf("AFTER ITERATE_SYM\n");	
 	pop_bounds(BT_TOP);
 	return (true);
 }

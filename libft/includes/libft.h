@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/01 13:21:24 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/04 18:25:14 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/05 18:42:33 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,61 +26,76 @@
 # include <errno.h>
 # include <dirent.h>
 
-# define UC unsigned char
+/*
+** ft_toupper.c		=> 1 function
+*/
+int					ft_toupper(int c);
 
-# define MALLOC_ERROR "memory allocation failure"
-# define MISSING_FILE_ERROR "missing file at path "
+/*
+** ft_strlen.c		=> 1 function
+*/
+size_t				ft_strlen(char const *str);
 
-typedef struct		s_info
-{
-	double			a;
-	int				e;
-	int				c;
-	int				sign;
-	int				i;
-	int				count;
-}					t_info;
-
+/*
+** ft_bzero.c		=> 1 function
+*/
 void				ft_bzero(void *s, size_t n);
 
-int					ft_isdigit(int c);
-int					ft_isblank(int c);
-
-int					ft_atoi(const char *str);
-float				ft_atof_f(char *s);
-
-int					ft_iclamp(int value, const int min, const int max);
-float				ft_fclamp(float value, const float min, const float max);
-
-int					ft_strcmp(const char *s1, const char *s2);
-
-char				*ft_strcat(char *dest, const char *src);
-char				*ft_strchr(const char *str, int c, int inc);
-char				*ft_strnchr(const char *str, int c, int n, int inc);
-char				*ft_strrchr(const char *str, int c);
-char				*ft_strcpy(char *dest, const char *src);
-char				*ft_strncpy(char *dest, const char *src, size_t n);
-char				*ft_strdup(const char *str);
-
-size_t				ft_strlen(const char *str);
-
-void				ft_putchar(char c);
-void				ft_putchar_fd(short fd, char c);
-void				ft_putstr(char const *s);
-void				ft_putstr_fd(short fd, char const *s);
-void				ft_putendl(char const *s);
-
-char				*ft_strnew(size_t size);
-char				*ft_strsub(char const *s, unsigned int start, size_t len);
-char				*ft_strjoin(char const *s1, char const *s2);
-char				*ft_strjoin_bf(char *s1, char *s2);
-char				*ft_strjoin_lf(char *s1, char const *s2);
-char				*ft_strjoin_rf(char const *s1, char *s2);
-char				*ft_strword(char const *s, unsigned int *offset);
-
-unsigned int		ft_wordoffset(char const *s, unsigned int offset);
-unsigned int		skip_line(char *data, unsigned int seed);
-
+/*
+** ft_itoa.c		=> 2 functions
+*/
 char				*ft_itoa(int n);
+
+/*
+** ft_strnew.c		=> 1 function
+*/
+char				*ft_strnew(size_t size);
+
+/*
+** ft_strcat.c		=> 1 function
+*/
+char				*ft_strcat(char *dest, char const *src);
+
+/*
+** ft_strcpy.c		=> 2 functions
+*/
+char				*ft_strcpy(char *dest, char const *src);
+char				*ft_strncpy(char *dest, char const *src, size_t n);
+
+/*
+** ft_putchar.c		=> 4 functions
+*/
+void				ft_putchar(char c);
+void				ft_putnchar(char c, size_t n);
+void				ft_putchar_fd(short fd, char c);
+void				ft_putnchar_fd(short fd, char c, size_t n);
+
+/*
+** ft_putstr.c		=> 4 functions
+*/
+void				ft_putstr(char const *str);
+void				ft_putnstr(char const *str, size_t n);
+void				ft_putstr_fd(short fd, char const *str);
+void				ft_putnstr_fd(short fd, char const *str, size_t n);
+
+/*
+** ft_putendl.c		=> 2 functions
+*/
+void				ft_putendl(char const *str);
+void				ft_putendl_fd(short fd, char const *str);
+
+/*
+** ft_strjoin.c		=> 4 functions
+*/
+char				*ft_strjoin_both_free(char *left, char *right);
+char				*ft_strjoin_left_free(char *left, char const *right);
+char				*ft_strjoin_right_free(char const *left, char *right);
+char				*ft_strjoin(char const *left, char const *right);
+
+/*
+** ft_strcmp.c		=> 2 functions
+*/
+int					ft_strcmp(char const *s1, char const *s2);
+int					ft_strncmp(char const *s1, char const *s2, size_t n);
 
 #endif

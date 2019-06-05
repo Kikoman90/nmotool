@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: fsidler <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/21 18:44:44 by fsidler           #+#    #+#             */
-/*   Updated: 2015/12/21 18:44:50 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/05 18:41:40 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static long		ft_digitnb(int n)
+static long int	ft_digitnb(long int n)
 {
-	long		size;
+	long int	size;
 
 	if (n == 0)
 		return (1);
@@ -32,35 +32,24 @@ static long		ft_digitnb(int n)
 	return (size++);
 }
 
-static int		ft_sign(int n)
-{
-	if (n < 0)
-		return (1);
-	return (0);
-}
-
 char			*ft_itoa(int n)
 {
-	long		n_long;
-	long		length;
 	char		*fresh;
+	long int	n_long;
+	long int	length;
 
-	n_long = n;
+	n_long = (long int)n;
 	length = ft_digitnb(n_long);
-	fresh = (char *)malloc((length + 1) * sizeof(char));
-	if (!fresh)
+	if (!(fresh = (char *)malloc((length + 1) * sizeof(char))))
 		return (NULL);
-	fresh[length] = '\0';
-	length--;
-	if (n_long < 0)
-		n_long = -n_long;
+	fresh[length--] = '\0';
+	n_long *= (n_long < 0) ? -1 : 1;
 	while (length >= 0)
 	{
-		fresh[length] = (n_long % 10) + '0';
-		length--;
+		fresh[length--] = (n_long % 10) + '0';
 		n_long /= 10;
 	}
-	if (ft_sign(n))
+	if (n < 0)
 		fresh[0] = '-';
 	return (fresh);
 }

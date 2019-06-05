@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/06/04 15:56:47 by fsidler          ###   ########.fr        #
+#    Updated: 2019/06/05 13:20:09 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,7 +60,7 @@ Y =		"\033[33m"
 B =		"\033[34m"
 M =		"\033[35m"
 X =		"\033[0m"
-UP =	"\033[A"
+UP =	"\033[2A"
 CUT =	"\033[2K"
 
 all:
@@ -77,17 +77,17 @@ $(CHILD_DIR):
 		@mkdir -p $(OBJ_DIR)/$@
 
 $(FT_NM): $(OBJ_NM)
-		$(CC) $(FLAGS) -o $@ $(OBJ_NM) -L $(LIBFT_DIR) -lft
+		@$(CC) $(FLAGS) -o $@ $(OBJ_NM) -L $(LIBFT_DIR) -lft
 		@echo ${B}[$(FT_NM)] compilation success${X}
 
 $(FT_OTOOL): $(OBJ_OTOOL)
-		$(CC) $(FLAGS) -o $@ $(OBJ_OTOOL) -L $(LIBFT_DIR) -lft
+		@$(CC) $(FLAGS) -o $@ $(OBJ_OTOOL) -L $(LIBFT_DIR) -lft
 		@echo ${Y}[$(FT_OTOOL)] compilation success${X}
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 		@make $(CHILD_DIR)
-		@echo ${CUT} ${M}compiling [$@]...${X} ${UP}
-		$(CC) $(FLAGS) -I $(INC_DIR) -c $< -o $@ 
+		@$(CC) $(FLAGS) -I $(INC_DIR) -c $< -o $@ 
+		#@echo ${UP}${M}compiling [$@]...${X}${CUT}
 
 norme:
 		@make norme -C $(LIBFT_DIR)

@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 14:19:10 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/04 17:02:02 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/05 18:46:35 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void	pop_bounds(t_bounds_target b_target)
 	struct s_bounds	*pop;
 
 	pop = NULL;
-	if (VALID_BT(b_target) && (pop = g_file_info.bounds[b_target]) != NULL)
+	if (VALID_BT(b_target) && (pop = g_file_info.bounds[b_target]))
 	{
 		if (b_target == BT_TOP)
 			TOP_BOUNDS = (pop->next != MACHO_BOUNDS) ? pop->next : NULL;
@@ -69,25 +69,26 @@ bool	push_bounds(size_t offset, size_t size, t_bounds_target b_target)
 
 	if (offset + size < offset)
 		return (NULL);
-	if (VALID_BT(b_target))
+	if (!VALID_BT(b_target))
+		return (log_error(ERR_THROW, "invalid bounds target !", FROM));
+	if (b_target == BT_TOP && !(next = TOP_BOUNDS))
 	{
-		if ((b_target == BT_TOP && !MACHO_BOUNDS) \
-			|| (b_target == BT_MACHO && !FILE_BOUNDS))
-			return (log_error(ERR_THROW, "missing file or macho bounds", FROM));
-		if ((next = g_file_info.bounds[b_target]->next) \
-			&& offset + size > next->size)
-			return (log_error(ERR_THROW, "invalid bounds", FROM));
-		if (!(newt = (struct s_bounds*)malloc(sizeof(*newt))))
-			return (log_error(ERR_MALLOC, strerror(errno), FROM));
-		newt->offset = offset;
-		newt->size = size;
-		newt->next = next;
-		if (b_target != BT_TOP)
-			pop_bounds(b_target);
-		g_file_info.bounds[b_target] = newt;
-		return (true);
+		if (!(next = MACHO_BOUNDS))
+			return (log_error(ERR_THROW, "missing macho bounds", FROM));
 	}
-	return (log_error(ERR_THROW, "invalid bounds target !", FROM));
+	else if (b_target == BT_MACHO && !(next = FILE_BOUNDS))
+		return (log_error(ERR_THROW, "missing file bounds", FROM));
+	if (b_target != BT_FILE && offset + size > next->size)
+		return (log_error(ERR_THROW, "invalid bounds", FROM));
+	if (!(newt = (struct s_bounds*)malloc(sizeof(*newt))))
+		return (log_error(ERR_MALLOC, strerror(errno), FROM));
+	newt->offset = offset;
+	newt->size = size;
+	newt->next = (b_target == BT_FILE) ? NULL : next;
+	if (b_target != BT_TOP)
+		pop_bounds(b_target);
+	g_file_info.bounds[b_target] = newt;
+	return (true);
 }
 
 bool	unload_file(void)
