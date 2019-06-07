@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/06/05 13:20:09 by fsidler          ###   ########.fr        #
+#    Updated: 2019/06/07 14:44:07 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,7 @@ SRC_COMMON =	funk/fat_arch_funk.c \
 				logger.c \
 
 SRC_NM = 		nm.c \
+				symbolist.c \
 				symbol_table.c \
 				$(SRC_COMMON)
 

@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 14:19:10 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/05 18:46:35 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/07 15:27:54 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,20 @@ void	pop_bounds(t_bounds_target b_target)
 	if (VALID_BT(b_target) && (pop = g_file_info.bounds[b_target]))
 	{
 		if (b_target == BT_TOP)
+		{
+			ft_putendl("i undetstamd\n");
 			TOP_BOUNDS = (pop->next != MACHO_BOUNDS) ? pop->next : NULL;
+		}
 		else if (b_target == BT_MACHO)
 		{
+			ft_putendl("OH FUCK OFF\n");
 			while (TOP_BOUNDS)
 				pop_bounds(BT_TOP);
 			MACHO_BOUNDS = NULL;
 		}
 		else if (b_target == BT_FILE)
 		{
+			ft_putendl("YESAI\n");
 			pop_bounds(BT_MACHO);
 			FILE_BOUNDS = NULL;
 		}
@@ -93,8 +98,10 @@ bool	push_bounds(size_t offset, size_t size, t_bounds_target b_target)
 
 bool	unload_file(void)
 {
+	ft_putendl(" I SAID MOFO");
 	if (g_file_info.ptr && g_file_info.ptr != MAP_FAILED && FILE_BOUNDS)
 	{
+		ft_putendl("MOFO");
 		if (munmap(g_file_info.ptr, FILE_BOUNDS->size) == -1)
 		{
 			pop_bounds(BT_FILE);

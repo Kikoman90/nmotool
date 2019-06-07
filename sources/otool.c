@@ -6,11 +6,15 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/14 19:22:00 by fsidler           #+#    #+#             */
-/*   Updated: 2019/05/29 18:14:34 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/07 14:45:36 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "otool.h"
+
+//
+#include <stdio.h>
+//
 
 int		main(int argc, char **argv)
 {

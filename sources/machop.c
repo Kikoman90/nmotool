@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:56:51 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/05 18:49:22 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/07 15:25:56 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,23 @@ bool	iterate_load_commands(uint32_t ncmds, uint32_t target, t_funk funk, \
 	t_command_op opera)
 {
 	size_t						offset;
+	size_t						match_count;
 	struct load_command const	*command;
 
 	offset = 0;
+	match_count = 0;
 	while (ncmds--)
 	{
 		if (!(command = get_safe(offset, sizeof(*command), BT_TOP)))
 			return (log_error(ERR_THROW, "failed to get command", FROM));
-		if (swap32(command->cmd) == target && !opera(offset, funk))
-			return (log_error(ERR_THROW, "command operation failed", FROM));
+		if (swap32(command->cmd) == target)
+		{
+			match_count++;
+			if (target == LC_SYMTAB && match_count != 1)
+				return (log_error(ERR_FILE, "too many symtab commands", FROM));
+			if (!opera(offset, funk))
+				return (log_error(ERR_THROW, "command operation failed", FROM));
+		}
 		offset += swap32(command->cmdsize);
 	}
 	return (true);
@@ -95,6 +103,7 @@ bool	play_macho(char const *filepath, t_conductor ctor)
 		ret = log_error(ERR_THROW, "could not load file", FROM);
 	else if (!machopera(0, filesize, ctor))
 		ret = log_error(ERR_THROW, "could not extract macho", FROM);
+	ft_putendl("OK NEIN");
 	return ((!unload_file()) ? \
 		log_error(ERR_THROW, "could not unload file", FROM) : ret);
 }
