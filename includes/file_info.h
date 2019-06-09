@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fileinf.h                                          :+:      :+:    :+:   */
+/*   file_info.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 14:28:36 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/05 14:23:58 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/09 09:55:43 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef FILEINF_H
-# define FILEINF_H
+#ifndef FILE_INFO_H
+# define FILE_INFO_H
 
 # include <stdlib.h>
 # include <fcntl.h>
@@ -42,7 +42,7 @@ typedef enum			e_bounds_target {
 # define TOP_BOUNDS		g_file_info.bounds[BT_TOP]
 
 /*
-** file_inf.c			=> 5 functions
+** file_info.c			=> 5 functions
 */
 void					*get_safe(size_t offset, size_t size, \
 							t_bounds_target b_target);

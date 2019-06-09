@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/06/07 14:44:07 by fsidler          ###   ########.fr        #
+#    Updated: 2019/06/09 10:04:59 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ FLAGS =	-Wall -Wextra -Werror -MMD
 #-pedantic
 
 ifeq ($(DEBUG), yes)
-	FLAGS += -DNMO_DEBUG #-g -fsanitize=address,undefined
+	FLAGS += -DNMO_DEBUG #-fsanitize=address#,undefined #-g
 endif
 
 LIBFT_DIR = libft
@@ -30,7 +30,8 @@ OBJ_DIR =	objs
 
 CHILD_DIR = funk
 
-SRC_COMMON =	funk/fat_arch_funk.c \
+SRC_COMMON =	endianness.c \
+				funk/fat_arch_funk.c \
 				funk/header_funk.c \
 				funk/segment_funk.c \
 				funk/section_funk.c \
@@ -38,14 +39,16 @@ SRC_COMMON =	funk/fat_arch_funk.c \
 				funk/nlist_funk2.c \
 				funk/funk1.c \
 				funk/funk2.c \
-				machop.c \
-				fileinf.c \
-				endianness.c \
 				logger.c \
+				file_info.c \
+				machop.c \
 
-SRC_NM = 		nm.c \
-				symbolist.c \
-				symbol_table.c \
+SRC_NM = 		symbol_list.c \
+				symbol_type.c \
+				nm_print.c \
+				nm_sort.c \
+				nm_exec.c \
+				nm_main.c \
 				$(SRC_COMMON)
 
 SRC_OTOOL =		otool.c \
@@ -88,7 +91,7 @@ $(FT_OTOOL): $(OBJ_OTOOL)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 		@make $(CHILD_DIR)
 		@$(CC) $(FLAGS) -I $(INC_DIR) -c $< -o $@ 
-		#@echo ${UP}${M}compiling [$@]...${X}${CUT}
+		@echo ${M}compiling [$@]...${X}
 
 norme:
 		@make norme -C $(LIBFT_DIR)

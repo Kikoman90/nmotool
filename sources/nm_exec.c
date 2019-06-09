@@ -1,21 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nm.c                                               :+:      :+:    :+:   */
+/*   nm_exec.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/14 19:21:53 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/07 14:46:50 by fsidler          ###   ########.fr       */
+/*   Created: 2019/06/09 10:01:34 by fsidler           #+#    #+#             */
+/*   Updated: 2019/06/09 10:15:14 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-// flag handling
-// show usage in case of invalid flag or input
-
-// get_sections_types(size_t offset, t_funk funk)
 static bool	manage_segment(size_t offset, t_funk funk)
 {
 	uint32_t				cmdsize;
@@ -32,13 +28,14 @@ static bool	manage_segment(size_t offset, t_funk funk)
 		cmdsize - segment_funk.size_of, BT_TOP))
 		return (log_error(ERR_THROW, "failed to push bounds", FROM));
 	if (!iterate_sections(segment_funk.nsects(ptr_segment_cmd), \
-		(char const *[2]){ NULL, NULL }, funk.section(), &add_section_type_table_entry))
+		(char const *[2]){ NULL, NULL }, funk.section(), \
+		&add_section_type_table_entry))
 		return (log_error(ERR_THROW, "failed to iterate over sections", FROM));
 	pop_bounds(BT_TOP);
 	return (true);
 }
 
-static bool extract_nlist(struct symtab_command const symtab, uint32_t nsyms,
+static bool	extract_nlist(struct symtab_command const symtab, uint32_t nsyms,
 	t_nlist_funk nlist_funk)
 {
 	uint32_t		max_name_size;
@@ -46,13 +43,12 @@ static bool extract_nlist(struct symtab_command const symtab, uint32_t nsyms,
 	t_nlist const	*ptr_nlist;
 
 	if (!(ptr_nlist = get_safe(symtab.symoff, nsyms * nlist_funk.size_of, \
-		BT_MACHO)))
+		BT_MACHO))) // or BT_FILE ?
 		return (log_error(ERR_FILE, "failed to get nlist array", FROM));
 	if (symtab.stroff + symtab.strsize < symtab.stroff)
 		return (log_error(ERR_FILE, "invalid string table info", FROM));
 	if (!reset_symbolist(nsyms))
 		return (log_error(ERR_THROW, "failed to reset symbolist", FROM));
-	ft_putendl("OH YEAH! I MEAN CAN IT GET ANY BETTER THAN THIS?");
 	while (nsyms--)
 	{
 		if (!(max_name_size = symtab.strsize - nlist_funk.n_strx(ptr_nlist)) \
@@ -67,15 +63,13 @@ static bool extract_nlist(struct symtab_command const symtab, uint32_t nsyms,
 			nlist_funk.n_value(ptr_nlist)), nlist_funk.n_value(ptr_nlist));
 		ptr_nlist = (t_nlist*)((char*)ptr_nlist + nlist_funk.size_of);
 	}
-	ft_putendl("OH NO");
 	return (true);
 }
 
-// get_symbols(size_t offset, t_funk funk)
 static bool	manage_symtab(size_t offset, t_funk funk)
 {
 	struct symtab_command const	*ptr_symtab;
-	
+
 	if (!(ptr_symtab = get_safe(offset, sizeof(*ptr_symtab), BT_TOP)))
 		return (log_error(ERR_FILE, "failed to get symtab command", FROM));
 	if (!extract_nlist(*ptr_symtab, ptr_symtab->nsyms, funk.nlist()))
@@ -83,27 +77,7 @@ static bool	manage_symtab(size_t offset, t_funk funk)
 	return (true);
 }
 
-static void	nm_print(void)
-{
-	t_symbol const	*symbol;
-
-	symbol = get_sorted_symbol_list();
-	while (symbol)
-	{
-		if (symbol->address || !(symbol->type == 'u' || symbol->type == 'U'))
-			print_hexa_address(symbol->address, 16);
-		else
-			ft_putnchar(' ', 16);
-		ft_putchar(' ');
-		ft_putchar(symbol->type);
-		ft_putchar(' ');
-		ft_putnstr(symbol->name, symbol->max_name_size);
-		ft_putchar('\n');
-		symbol = (symbol->next) ? symbol + symbol->next : NULL;
-	}
-}
-
-static bool	nm_conductor(t_funk funk)
+bool		nm_conductor(t_funk funk)
 {
 	uint32_t			ncmds;
 	t_header_funk		header_funk;
@@ -123,39 +97,7 @@ static bool	nm_conductor(t_funk funk)
 	if (!iterate_load_commands(ncmds, LC_SYMTAB, funk, &manage_symtab))
 		return (log_error(ERR_THROW, "failed to iterate over symtabs", FROM));
 	pop_bounds(BT_TOP);
-	nm_print();
+	print_symbols();
 	destroy_symbolist();
 	return (true);
-}
-
-int			main(int argc, char **argv)
-{
-	int	ret;
-
-	ret = 1;
-	if (argc < 2)
-	{
-		if (!play_macho(DEFAULT_TARGET, &nm_conductor))
-			ret = log_error(ERR_THROW, "nm failure", FROM);
-		return (ret);
-	}
-	while (*++argv)
-	{
-		if (**argv == '-')
-		{
-			;
-			//if (!nm_set_flag(*argv))
-				//ret = log_error(ERR_THROW...)
-		}
-		else
-		{
-			ft_putstr(*argv); //
-			ft_putstr(":\n"); //
-			if (!play_macho(*argv, &nm_conductor))
-				ret = log_error(ERR_THROW, "nm failure", FROM);
-			ft_putchar('\n'); //
-
-		}
-	}
-	return (ret);
 }

@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:55:08 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/05 18:34:59 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/09 04:55:13 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@ char		*log_from(char const *file, char const *func, uint32_t line)
 static void	log_display(t_error_type type, char const *err, char *from)
 {
 	static uint32_t				indent_level = 0;
-	static char const *const	err_map[ERR_N] = { "[invalid file] ", \
-		"[mmap failure] ", "[munmap failure] ", "[malloc failure] ", "" };
+	static char const *const	err_map[ERR_N] = { "[invalid usage] ", \
+		"[invalid file] ", "[mmap failure] ", "[munmap failure] ", \
+		"[malloc failure] ", "" };
 
 	if (type < ERR_THROW || indent_level == 0)
 	{

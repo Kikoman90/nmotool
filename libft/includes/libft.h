@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/01 13:21:24 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/05 18:42:33 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/09 05:58:52 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@
 # include <dirent.h>
 
 /*
-** ft_toupper.c		=> 1 function
+** ft_upper.c		=> 2 functions
 */
+bool				ft_isupper(int c);
 int					ft_toupper(int c);
 
 /*

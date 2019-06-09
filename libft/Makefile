@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/12/02 11:09:55 by fsidler           #+#    #+#              #
-#    Updated: 2019/06/05 18:43:07 by fsidler          ###   ########.fr        #
+#    Updated: 2019/06/09 05:59:25 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ DIR_OBJS = objs
 
 HEADERS = includes
 
-SRCS = 	ft_toupper.c \
+SRCS = 	ft_upper.c \
 		ft_strlen.c \
 		ft_bzero.c \
 		ft_itoa.c \

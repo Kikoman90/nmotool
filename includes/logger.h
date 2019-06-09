@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:55:13 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/04 17:11:14 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/09 04:54:33 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@
 # define CLEAR_CLR "\033[0m\n"
 
 typedef enum	e_error_type {
-	ERR_FILE = 0,
+	ERR_USAGE = 0,
+	ERR_FILE,
 	ERR_MMAP,
 	ERR_MUNMAP,
 	ERR_MALLOC,

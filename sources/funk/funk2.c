@@ -6,17 +6,11 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 15:20:26 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/04 18:21:29 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/09 08:42:33 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "funk.h"
-
-t_fat_arch_funk	fat64(void)
-{
-	return ((t_fat_arch_funk)\
-		{ sizeof(struct fat_arch_64), &offset64, &size64 });
-}
 
 t_header_funk	header64(void)
 {

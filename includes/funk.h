@@ -6,14 +6,19 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/28 16:28:19 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/04 18:33:01 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/09 08:52:42 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FUNK_H
 # define FUNK_H
 
-# include "maggie_mageek_moch_mach-includes_et_un_chewing_gum_gout_sauce_magi.h"
+// # include <mach-o/arch.h>
+# include <ar.h>
+# include <mach-o/fat.h>
+# include <mach-o/loader.h>
+# include <mach-o/nlist.h>
+
 # include "endianness.h"
 
 typedef union					u_mach_header
@@ -141,7 +146,6 @@ uint64_t						n_value64(t_nlist const *ptr_nlist);
 
 typedef struct					s_funk
 {
-	t_fat_arch_funk				(*fat_arch)(void);
 	t_header_funk				(*header)(void);
 	t_segment_funk				(*segment)(void);
 	t_section_funk				(*section)(void);
@@ -149,9 +153,8 @@ typedef struct					s_funk
 }								t_funk;
 
 /*
-** funk/funk1.c					=> 5 functions
+** funk/funk1.c					=> 4 functions
 */
-t_fat_arch_funk					fat32(void);
 t_header_funk					header32(void);
 t_segment_funk					segment32(void);
 t_section_funk					section32(void);
@@ -160,7 +163,6 @@ t_nlist_funk					nlist32(void);
 /*
 ** funk/funk2.c					=> 4 functions
 */
-t_fat_arch_funk					fat64(void);
 t_header_funk					header64(void);
 t_segment_funk					segment64(void);
 t_section_funk					section64(void);

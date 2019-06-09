@@ -6,14 +6,14 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:56:51 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/07 15:25:56 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/09 10:10:14 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "common.h"
 
-bool	iterate_load_commands(uint32_t ncmds, uint32_t target, t_funk funk, \
-	t_command_op opera)
+bool		iterate_load_commands(uint32_t ncmds, uint32_t target, \
+	t_funk funk, t_command_op opera)
 {
 	size_t						offset;
 	size_t						match_count;
@@ -38,7 +38,7 @@ bool	iterate_load_commands(uint32_t ncmds, uint32_t target, t_funk funk, \
 	return (true);
 }
 
-bool	iterate_sections(uint32_t nsects, char const *names[2], \
+bool		iterate_sections(uint32_t nsects, char const *names[2], \
 	t_section_funk funk, t_section_op opera)
 {
 	uint32_t		i;
@@ -62,48 +62,61 @@ bool	iterate_sections(uint32_t nsects, char const *names[2], \
 	return (true);
 }
 
-bool	machopera(size_t dist, size_t length, t_conductor ctor)
+static bool	manage_fat(size_t offset, size_t size, uint32_t magic, \
+	t_conductor ctor)
 {
-	bool			ret;
-	uint32_t const	*ptr_magic;
-	t_funk			funk;
+	t_fat_arch_funk	fat_arch_funk;
 
-	if (!push_bounds(dist, length, BT_MACHO))
+	set_endianness(MAGIC_IS_CIGAM(magic));
+	fat_arch_funk = (MAGIC_IS_64(magic)) ? \
+		(t_fat_arch_funk){ sizeof(struct fat_arch_64), &offset64, &size64 } : \
+		(t_fat_arch_funk){ sizeof(struct fat_arch), &offset32, &size32 };
+	// nfat_arch blabla
+	
+	(void)offset;
+	(void)size;
+	(void)ctor;
+	return (true);
+}
+
+static bool	manage_macho(size_t offset, size_t size, uint32_t magic, \
+	t_conductor ctor)
+{
+	bool	ret;
+	t_funk	funk;
+
+	if (!push_bounds(offset, size, BT_MACHO))
 		return (log_error(ERR_THROW, "failed to set macho bounds", FROM));
-	if (!(ptr_magic = get_safe(0, sizeof(*ptr_magic), BT_MACHO)))
-		ret = log_error(ERR_THROW, "failed to get magic number", FROM);
-	else if ((ret = true))
-	{
-		if ((dist = MAGIC_IS_CIGAM(*ptr_magic)))
-			set_endianness(true);
-		length = MAGIC_IS_64(*ptr_magic);
-		funk = (length) ? \
-			(t_funk){ &fat64, &header64, &segment64, &section64, &nlist64 } : \
-			(t_funk){ &fat32, &header32, &segment32, &section32, &nlist32 };
-		if (*ptr_magic == 9090) //ARMAG
-			ret = false;
-		else if (*ptr_magic == (dist ? FAT_CIGAM_(length) : FAT_MAGIC_(length)))
-			ret = false;
-		else if (*ptr_magic == (dist ? MH_CIGAM_(length) : MH_MAGIC_(length)))
-			ret = ctor(funk);
-		else
-			ret = log_error(ERR_THROW, "invalid/unsupported architecture", FROM);
-	}
+	set_endianness(MAGIC_IS_CIGAM(magic));
+	funk = (MAGIC_IS_64(magic)) ? \
+		(t_funk){ &header64, &segment64, &section64, &nlist64 } : \
+		(t_funk){ &header32, &segment32, &section32, &nlist32 };
+	ret = ctor(funk);
 	pop_bounds(BT_MACHO);
 	return (ret);
 }
 
-bool	play_macho(char const *filepath, t_conductor ctor)
+bool		machopera(char const *filepath, t_conductor ctor)
 {
-	bool	ret;
-	size_t	filesize;
+	bool			ret;
+	size_t			filesize;
+	uint32_t const	*ptr_magic;
 
 	ret = true;
 	if (!load_file(filepath, &filesize))
 		ret = log_error(ERR_THROW, "could not load file", FROM);
-	else if (!machopera(0, filesize, ctor))
-		ret = log_error(ERR_THROW, "could not extract macho", FROM);
-	ft_putendl("OK NEIN");
+	else if (!(ptr_magic = get_safe(0, sizeof(*ptr_magic), BT_FILE)))
+		ret = log_error(ERR_THROW, "failed to get magic number", FROM);
+	else if (*ptr_magic == 9090) //ARMAG
+		ret = false;
+	else if (*ptr_magic == FAT_MAGIC || *ptr_magic == FAT_MAGIC_64 \
+		|| *ptr_magic == FAT_CIGAM || *ptr_magic == FAT_CIGAM_64)
+		ret = manage_fat(0, filesize, *ptr_magic, ctor);
+	else if (*ptr_magic == MH_MAGIC || *ptr_magic == MH_MAGIC_64 \
+		|| *ptr_magic == MH_CIGAM || *ptr_magic == MH_CIGAM_64)
+		ret = manage_macho(0, filesize, *ptr_magic, ctor);
+	else
+		ret = log_error(ERR_FILE, "invalid/unsupported architecture", FROM);
 	return ((!unload_file()) ? \
 		log_error(ERR_THROW, "could not unload file", FROM) : ret);
 }

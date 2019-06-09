@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   symbol_table.c                                     :+:      :+:    :+:   */
+/*   symbol_type.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/28 19:40:08 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/05 17:58:12 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/09 09:07:03 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,6 @@
 
 static uint8_t g_section = 0;
 static char g_section_type_table[255];
-
-void	print_hexa_address(uint64_t addr, uint32_t len)
-{
-	static char const hex_string[16] = "0123456789abcdef";
-
-	if (len)
-	{
-		print_hexa_address(addr / 16, len - 1);
-		ft_putchar(hex_string[addr % 16]);
-	}
-}
 
 void	reset_section_type_table(void)
 {
