@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:56:51 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/11 20:13:06 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/11 20:47:05 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ bool	iterate_load_commands(uint32_t ncmds, uint32_t target, t_funk funk, \
 	while (ncmds--)
 	{
 		if (!(command = get_safe(offset, sizeof(*command), BT_TOP)))
-			return (log_error(ERR_FILE, "failed to get command", FROM));
+			return (log_error(ERR_THROW, "failed to get command", FROM));
 		if (swap32(command->cmd) == target)
 		{
 			match_count++;
@@ -48,7 +48,7 @@ bool	iterate_sections(uint32_t nsects, char const *names[2], \
 
 	i = 0;
 	if (!(ptr_section = get_safe(0, nsects * funk.size_of, BT_TOP)))
-		return (log_error(ERR_FILE, "failed to get section", FROM));
+		return (log_error(ERR_THROW, "failed to get section", FROM));
 	while (i < nsects)
 	{
 		funk.get_segname(ptr_section, segname);

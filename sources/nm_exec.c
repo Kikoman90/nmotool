@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/09 10:01:34 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/11 20:34:44 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/11 20:45:57 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static bool	manage_segment(size_t offset, t_funk funk)
 
 	segment_funk = funk.segment();
 	if (!(ptr_segment_cmd = get_safe(offset, segment_funk.size_of, BT_TOP)))
-		return (log_error(ERR_FILE, "segment command fetch failed", FROM));
+		return (log_error(ERR_THROW, "segment command fetch failed", FROM));
 	cmdsize = segment_funk.cmdsize(ptr_segment_cmd);
 	if (cmdsize < segment_funk.size_of)
 		return (log_error(ERR_FILE, "size of segment is invalid", FROM));
@@ -44,7 +44,7 @@ static bool	extract_nlist(struct symtab_command symtab, uint32_t nsyms,
 
 	if (!(ptr_nlist = get_safe(swap32(symtab.symoff), \
 		nsyms * nlist_funk.size_of, BT_MACHO)))
-		return (log_error(ERR_FILE, "failed to get nlist array", FROM));
+		return (log_error(ERR_THROW, "failed to get nlist array", FROM));
 	if (!reset_symbolist(nsyms))
 		return (log_error(ERR_THROW, "failed to reset symbolist", FROM));
 	while (nsyms--)
@@ -55,7 +55,7 @@ static bool	extract_nlist(struct symtab_command symtab, uint32_t nsyms,
 			return (log_error(ERR_FILE, "invalid symbol name offset", FROM));
 		if (!(symbol_name = get_safe(swap32(symtab.stroff) + \
 			nlist_funk.n_strx(ptr_nlist), max_name_size, BT_MACHO)))
-			return (log_error(ERR_FILE, "failed to get symbol name", FROM));
+			return (log_error(ERR_THROW, "failed to get symbol name", FROM));
 		new_symbol(symbol_name, max_name_size, \
 			extract_symbol_type(nlist_funk.n_type(ptr_nlist), \
 			nlist_funk.n_sect(ptr_nlist), nlist_funk.n_desc(ptr_nlist), \
@@ -70,7 +70,7 @@ static bool	manage_symtab(size_t offset, t_funk funk)
 	struct symtab_command const	*ptr_symtab;
 
 	if (!(ptr_symtab = get_safe(offset, sizeof(*ptr_symtab), BT_TOP)))
-		return (log_error(ERR_FILE, "failed to get symtab command", FROM));
+		return (log_error(ERR_THROW, "failed to get symtab command", FROM));
 	if (swap32(ptr_symtab->stroff) + swap32(ptr_symtab->strsize) < \
 		swap32(ptr_symtab->stroff))
 		return (log_error(ERR_FILE, "invalid string table info", FROM));
@@ -87,7 +87,7 @@ bool		nm_conductor(t_funk funk)
 
 	header_funk = funk.header();
 	if (!(ptr_header = get_safe(0, header_funk.size_of, BT_MACHO)))
-		return (log_error(ERR_FILE, "failed to get macho header", FROM));
+		return (log_error(ERR_THROW, "failed to get macho header", FROM));
 	if (!push_bounds(header_funk.size_of, \
 		header_funk.sizeofcmds(ptr_header), BT_TOP))
 		return (log_error(ERR_THROW, "failed to set command bounds", FROM));

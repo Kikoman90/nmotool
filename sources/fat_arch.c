@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/11 20:11:02 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/11 20:33:03 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/11 20:46:23 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static bool	arch_is_valid(t_fat_arch const *ptr_fat_arch, \
 
 	if (!(ptr_magic = get_safe(arch_funk.offset(ptr_fat_arch), \
 		arch_funk.size(ptr_fat_arch), BT_FILE)))
-		return (log_error(ERR_FILE, "failed to get magic number", FROM));
+		return (log_error(ERR_THROW, "failed to get magic number", FROM));
 	else if ((*ptr_magic == MH_MAGIC_64 || *ptr_magic == MH_CIGAM_64) \
 		|| ((*ptr_magic == MH_MAGIC || *ptr_magic == MH_CIGAM) \
 		&& (!found_valid || g_all_arch)))
@@ -66,7 +66,7 @@ static bool	extract_arch(uint32_t nfat_arch, t_fat_arch_funk arch_funk, \
 
 	if (!(ptr_fat_arch = get_safe(sizeof(struct fat_header), \
 		nfat_arch * arch_funk.size_of, BT_FILE)))
-		return (log_error(ERR_FILE, "failed to get fat_arch array", FROM));
+		return (log_error(ERR_THROW, "failed to get fat_arch array", FROM));
 	ptr_valid = NULL;
 	while (nfat_arch--)
 	{
@@ -95,7 +95,7 @@ bool		manage_fat(uint32_t magic, t_conductor ctor)
 
 	set_endianness(endian_swap = MAGIC_IS_CIGAM(magic));
 	if (!(ptr_header = get_safe(0, sizeof(*ptr_header), BT_FILE)))
-		return (log_error(ERR_FILE, "failed to get fat header", FROM));
+		return (log_error(ERR_THROW, "failed to get fat header", FROM));
 	nfat_arch = swap32(ptr_header->nfat_arch);
 	arch_funk = (MAGIC_IS_64(magic)) ? \
 		(t_fat_arch_funk){ sizeof(struct fat_arch_64), &offset64, &size64, \
