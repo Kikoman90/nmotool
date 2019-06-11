@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/09 10:01:34 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 10:15:14 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/11 20:34:44 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,28 +35,27 @@ static bool	manage_segment(size_t offset, t_funk funk)
 	return (true);
 }
 
-static bool	extract_nlist(struct symtab_command const symtab, uint32_t nsyms,
+static bool	extract_nlist(struct symtab_command symtab, uint32_t nsyms,
 	t_nlist_funk nlist_funk)
 {
 	uint32_t		max_name_size;
 	char const		*symbol_name;
 	t_nlist const	*ptr_nlist;
 
-	if (!(ptr_nlist = get_safe(symtab.symoff, nsyms * nlist_funk.size_of, \
-		BT_MACHO))) // or BT_FILE ?
+	if (!(ptr_nlist = get_safe(swap32(symtab.symoff), \
+		nsyms * nlist_funk.size_of, BT_MACHO)))
 		return (log_error(ERR_FILE, "failed to get nlist array", FROM));
-	if (symtab.stroff + symtab.strsize < symtab.stroff)
-		return (log_error(ERR_FILE, "invalid string table info", FROM));
 	if (!reset_symbolist(nsyms))
 		return (log_error(ERR_THROW, "failed to reset symbolist", FROM));
 	while (nsyms--)
 	{
-		if (!(max_name_size = symtab.strsize - nlist_funk.n_strx(ptr_nlist)) \
-			|| max_name_size > symtab.strsize)
+		if (!(max_name_size = \
+			swap32(symtab.strsize) - nlist_funk.n_strx(ptr_nlist)) \
+			|| max_name_size > swap32(symtab.strsize))
 			return (log_error(ERR_FILE, "invalid symbol name offset", FROM));
-		if (!(symbol_name = get_safe(symtab.stroff + \
-			nlist_funk.n_strx(ptr_nlist), max_name_size, BT_MACHO))) // or BT_FILE ? test with fat binary
-			return (log_error(ERR_THROW, "failed to get symbol name", FROM));
+		if (!(symbol_name = get_safe(swap32(symtab.stroff) + \
+			nlist_funk.n_strx(ptr_nlist), max_name_size, BT_MACHO)))
+			return (log_error(ERR_FILE, "failed to get symbol name", FROM));
 		new_symbol(symbol_name, max_name_size, \
 			extract_symbol_type(nlist_funk.n_type(ptr_nlist), \
 			nlist_funk.n_sect(ptr_nlist), nlist_funk.n_desc(ptr_nlist), \
@@ -72,7 +71,10 @@ static bool	manage_symtab(size_t offset, t_funk funk)
 
 	if (!(ptr_symtab = get_safe(offset, sizeof(*ptr_symtab), BT_TOP)))
 		return (log_error(ERR_FILE, "failed to get symtab command", FROM));
-	if (!extract_nlist(*ptr_symtab, ptr_symtab->nsyms, funk.nlist()))
+	if (swap32(ptr_symtab->stroff) + swap32(ptr_symtab->strsize) < \
+		swap32(ptr_symtab->stroff))
+		return (log_error(ERR_FILE, "invalid string table info", FROM));
+	if (!extract_nlist(*ptr_symtab, swap32(ptr_symtab->nsyms), funk.nlist()))
 		return (log_error(ERR_THROW, "failed to extract symbols", FROM));
 	return (true);
 }
@@ -85,7 +87,7 @@ bool		nm_conductor(t_funk funk)
 
 	header_funk = funk.header();
 	if (!(ptr_header = get_safe(0, header_funk.size_of, BT_MACHO)))
-		return (log_error(ERR_THROW, "failed to get macho header", FROM));
+		return (log_error(ERR_FILE, "failed to get macho header", FROM));
 	if (!push_bounds(header_funk.size_of, \
 		header_funk.sizeofcmds(ptr_header), BT_TOP))
 		return (log_error(ERR_THROW, "failed to set command bounds", FROM));

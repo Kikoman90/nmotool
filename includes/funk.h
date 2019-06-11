@@ -6,16 +6,16 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/28 16:28:19 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 08:52:42 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/11 19:59:36 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FUNK_H
 # define FUNK_H
 
-// # include <mach-o/arch.h>
 # include <ar.h>
 # include <mach-o/fat.h>
+# include <mach-o/arch.h>
 # include <mach-o/loader.h>
 # include <mach-o/nlist.h>
 
@@ -53,15 +53,25 @@ typedef struct					s_fat_arch_funk
 	size_t						size_of;
 	uint64_t					(*offset)(t_fat_arch const *);
 	uint64_t					(*size)(t_fat_arch const *);
+	cpu_type_t					(*cputype)(t_fat_arch const *);
+	cpu_subtype_t				(*cpusubtype)(t_fat_arch const *);
 }								t_fat_arch_funk;
 
 /*
-** funk/fat_arch_funk.c			=> 4 functions
+** funk/fat_arch_funk1.c		=> 4 functions
 */
 uint64_t						offset32(t_fat_arch const *fata);
-uint64_t						offset64(t_fat_arch const *fata);
 uint64_t						size32(t_fat_arch const *fata);
+cpu_type_t						cputype32(t_fat_arch const *fata);
+cpu_subtype_t					cpusubtype32(t_fat_arch const *fata);
+
+/*
+** funk/fat_arch_funk1.c		=> 4 functions
+*/
+uint64_t						offset64(t_fat_arch const *fata);
 uint64_t						size64(t_fat_arch const *fata);
+cpu_type_t						cputype64(t_fat_arch const *fata);
+cpu_subtype_t					cpusubtype64(t_fat_arch const *fata);
 
 typedef union					u_segment_command
 {

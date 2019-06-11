@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/14 19:21:53 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 10:15:39 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/11 20:33:30 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,12 @@ static void	show_usage(void)
 	ft_putendl("-p: don't sort; display in symbol table order");
 	ft_putendl("-u: display only undefined symbols");
 	ft_putendl("-U: don't display undefined symbols");
+	ft_putendl("-f: show all architectures contained in the universal binary");
 }
 
 static bool	set_flags(char const *argv_flags)
 {
-	if (!(*argv_flags++))
-		return (log_error(ERR_USAGE, "no flag", FROM));
-	while (*argv_flags)
+	while (*++argv_flags)
 	{
 		if (*argv_flags == 'a')
 			toggle_print_flag(FLAG_a);
@@ -48,29 +47,32 @@ static bool	set_flags(char const *argv_flags)
 			toggle_print_flag(FLAG_u);
 		else if (*argv_flags == 'U')
 			toggle_print_flag(FLAG_U);
+		else if (*argv_flags == 'f')
+			toggle_fat_show_all_arch();
 		else
 			return (log_error(ERR_USAGE, "invalid flag", FROM));
-		argv_flags++;
 	}
 	return (true);
 }
 
-static bool	check_argv(int argc, char **argv, size_t *ptr_nb_of_files)
+static bool	check_usage(int argc, char **argv, uint32_t *ptr_nb_of_files)
 {
 	int	i;
 
 	i = 1;
+	*ptr_nb_of_files = 0;
 	while (i < argc)
 	{
-		if (*argv[i] == '-')
+		if (argv[i] && *argv[i] == '-')
 		{
-			if (!set_flags(argv[i]))
+			if (ft_strlen(argv[i]) <= 1 || !set_flags(argv[i]))
 			{
+				log_error(ERR_THROW, "flag usage is invalid", FROM);
 				show_usage();
-				return (log_error(ERR_THROW, "could not set nm flags", FROM));
+				return (false);
 			}
 		}
-		else
+		else if (argv[i])
 			(*ptr_nb_of_files)++;
 		i++;
 	}
@@ -79,11 +81,11 @@ static bool	check_argv(int argc, char **argv, size_t *ptr_nb_of_files)
 
 int			main(int argc, char **argv)
 {
-	int		ret;
-	size_t	nb_of_files;
+	int			ret;
+	uint32_t	nb_of_files;
 
 	ret = 1;
-	if (!check_argv(argc, argv, &nb_of_files))
+	if (!check_usage(argc, argv, &nb_of_files))
 	{
 		log_error(ERR_THROW, "nm failure", FROM);
 		return (EXIT_FAILURE);
@@ -95,8 +97,7 @@ int			main(int argc, char **argv)
 			if (nb_of_files > 1)
 			{
 				ft_putchar('\n');
-				ft_putstr(*argv);
-				ft_putstr(":\n");
+				ft_putendl(*argv);
 			}
 			if (!machopera(*argv, &nm_conductor))
 				ret = log_error(ERR_THROW, "nm failure", FROM);

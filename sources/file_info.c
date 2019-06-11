@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 14:19:10 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 09:55:23 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/11 14:49:27 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	*get_safe(size_t offset, size_t size, t_bounds_target b_target)
 	if (VALID_BT(b_target))
 	{
 		if (!(bounds = g_file_info.bounds[b_target]))
-			return (log_error_null(ERR_THROW, "invalid target bounds", FROM));
+			return (log_error_null(ERR_THROW, "empty target bounds", FROM));
 		if (offset + size > bounds->size)
 			return (log_error_null(ERR_THROW, "pointer out of bounds", FROM));
 		while (bounds)

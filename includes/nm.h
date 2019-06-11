@@ -6,14 +6,12 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/24 16:02:01 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 10:04:13 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/11 20:32:15 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef NM_H
 # define NM_H
-
-// #include <mach-o/stab.h> ???
 
 # include "common.h"
 
