@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   segment_funk.c                                     :+:      :+:    :+:   */
+/*   segment_64.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/05/28 15:30:10 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/04 15:18:10 by fsidler          ###   ########.fr       */
+/*   Created: 2019/06/14 13:16:32 by fsidler           #+#    #+#             */
+/*   Updated: 2019/06/14 13:30:27 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "funk.h"
 
-uint32_t	cmdsize32(t_segment_command const *ptr_cmd)
+static uint32_t	cmdsize(t_segment_command const *ptr_cmd)
 {
-	return (swap32(ptr_cmd->seg_cmd32.cmdsize));
+	return (swap32(ptr_cmd->seg_cmd_64.cmdsize));
 }
 
-uint32_t	cmdsize64(t_segment_command const *ptr_cmd)
+static uint32_t	nsects(t_segment_command const *ptr_cmd)
 {
-	return (swap32(ptr_cmd->seg_cmd64.cmdsize));
+	return (swap32(ptr_cmd->seg_cmd_64.nsects));
 }
 
-uint32_t	nsects32(t_segment_command const *ptr_cmd)
+t_segment_funk	segment_funk_64(void)
 {
-	return (swap32(ptr_cmd->seg_cmd32.nsects));
-}
-
-uint32_t	nsects64(t_segment_command const *ptr_cmd)
-{
-	return (swap32(ptr_cmd->seg_cmd64.nsects));
+	return ((t_segment_funk){ sizeof(struct segment_command_64), &cmdsize, \
+		&nsects, LC_SEGMENT_64 });
 }

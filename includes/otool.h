@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/24 16:02:19 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/04 18:33:40 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 11:57:09 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,10 @@
 # define OTOOL_H
 
 # include "common.h"
+
+/*
+** otool_exec.c	=> whater
+*/
+bool			otool_conductor(t_funk funk);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/24 16:02:01 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/11 20:32:15 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 11:38:42 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,8 @@ void				print_symbols(void);
 ** symbol_type.c	=> 3 functions
 */
 void				reset_section_type_table(void);
-void				add_section_type_table_entry(size_t offset);
+void				add_section_type_table_entry(t_section const *ptr_section, \
+						t_section_funk section_funk);
 char				extract_symbol_type(uint8_t n_type, uint8_t n_sect, \
 						uint16_t n_desc, uint64_t n_value);
 

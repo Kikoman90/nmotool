@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:56:51 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/11 20:47:05 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 11:39:56 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ bool	iterate_load_commands(uint32_t ncmds, uint32_t target, t_funk funk, \
 }
 
 bool	iterate_sections(uint32_t nsects, char const *names[2], \
-	t_section_funk funk, t_section_op opera)
+	t_section_funk section_funk, t_section_op opera)
 {
 	uint32_t		i;
 	char			sectname[16];
@@ -47,16 +47,16 @@ bool	iterate_sections(uint32_t nsects, char const *names[2], \
 	t_section const	*ptr_section;
 
 	i = 0;
-	if (!(ptr_section = get_safe(0, nsects * funk.size_of, BT_TOP)))
+	if (!(ptr_section = get_safe(0, nsects * section_funk.size_of, BT_TOP)))
 		return (log_error(ERR_THROW, "failed to get section", FROM));
 	while (i < nsects)
 	{
-		funk.get_segname(ptr_section, segname);
-		funk.get_sectname(ptr_section, sectname);
+		section_funk.get_segname(ptr_section, segname);
+		section_funk.get_sectname(ptr_section, sectname);
 		if ((!names[0] || !ft_strcmp(names[0], segname)) \
 			&& (!names[1] || !ft_strcmp(names[1], sectname)))
-			opera(i * funk.size_of);
-		ptr_section = (t_section*)((char*)ptr_section + funk.size_of);
+			opera(ptr_section, section_funk);
+		ptr_section = (t_section*)((char*)ptr_section + section_funk.size_of);
 		i++;
 	}
 	return (true);

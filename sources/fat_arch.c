@@ -6,11 +6,11 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/11 20:11:02 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/11 20:46:23 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 14:05:49 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "nm.h"
+#include "common.h"
 
 static bool g_all_arch = false;
 

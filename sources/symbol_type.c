@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/28 19:40:08 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 09:07:03 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 11:38:14 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,12 @@ void	reset_section_type_table(void)
 	g_section = 0;
 }
 
-void	add_section_type_table_entry(size_t offset)
+void	add_section_type_table_entry(t_section const *ptr_section, \
+	t_section_funk section_funk)
 {
-	char	*sectname;
+	char	sectname[16];
 
-	sectname = get_safe(offset, 16, BT_TOP);
+	section_funk.get_sectname(ptr_section, sectname);
 	if (!ft_strcmp(sectname, "__text"))
 		g_section_type_table[g_section++] = 't';
 	else if (!ft_strcmp(sectname, "__data"))

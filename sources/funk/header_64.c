@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fat_arch_funk2.c                                   :+:      :+:    :+:   */
+/*   header_64.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/06/11 16:50:16 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/11 19:57:17 by fsidler          ###   ########.fr       */
+/*   Created: 2019/06/14 12:59:31 by fsidler           #+#    #+#             */
+/*   Updated: 2019/06/14 13:12:19 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "funk.h"
 
-uint64_t		offset64(t_fat_arch const *fata)
+static uint32_t	ncmds(t_mach_header const *ptr_hdr)
 {
-	return (swap64(fata->fat_arch64.offset));
+	return (swap32(ptr_hdr->mach_hdr_64.ncmds));
 }
 
-uint64_t		size64(t_fat_arch const *fata)
+static uint32_t	sizeofcmds(t_mach_header const *ptr_hdr)
 {
-	return (swap64(fata->fat_arch64.size));
+	return (swap32(ptr_hdr->mach_hdr_64.sizeofcmds));
 }
 
-cpu_type_t		cputype64(t_fat_arch const *fata)
+t_header_funk	header_funk_64(void)
 {
-	return ((cpu_type_t)signed_swap32((int32_t)fata->fat_arch64.cputype));
-}
-
-cpu_subtype_t	cpusubtype64(t_fat_arch const *fata)
-{
-	return ((cpu_subtype_t)signed_swap32((int32_t)fata->fat_arch64.cpusubtype));
+	return ((t_header_funk)\
+		{ sizeof(struct mach_header_64), &ncmds, &sizeofcmds });
 }
