@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/11 20:11:02 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 14:05:49 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 15:06:41 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,6 @@ bool		manage_fat(uint32_t magic, t_conductor ctor)
 	if (!(ptr_header = get_safe(0, sizeof(*ptr_header), BT_FILE)))
 		return (log_error(ERR_THROW, "failed to get fat header", FROM));
 	nfat_arch = swap32(ptr_header->nfat_arch);
-	arch_funk = (MAGIC_IS_64(magic)) ? \
-		(t_fat_arch_funk){ sizeof(struct fat_arch_64), &offset64, &size64, \
-		&cputype64, &cpusubtype64 } : \
-		(t_fat_arch_funk){ sizeof(struct fat_arch), &offset32, &size32, \
-		&cputype32, &cpusubtype32 };
+	arch_funk = (MAGIC_IS_64(magic)) ? fat_arch_funk_64() : fat_arch_funk_32();
 	return (extract_arch(nfat_arch, arch_funk, endian_swap, ctor));
 }

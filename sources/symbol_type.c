@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/28 19:40:08 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 11:38:14 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 15:20:44 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	reset_section_type_table(void)
 	g_section = 0;
 }
 
-void	add_section_type_table_entry(t_section const *ptr_section, \
+bool	add_section_type_table_entry(t_section const *ptr_section, \
 	t_section_funk section_funk)
 {
 	char	sectname[16];
@@ -35,6 +35,7 @@ void	add_section_type_table_entry(t_section const *ptr_section, \
 		g_section_type_table[g_section++] = 'b';
 	else
 		g_section_type_table[g_section++] = 's';
+	return (true);
 }
 
 char	extract_symbol_type(uint8_t n_type, uint8_t n_sect, uint16_t n_desc, \

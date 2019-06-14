@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:56:51 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 11:39:56 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 15:23:36 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,9 @@ bool	iterate_sections(uint32_t nsects, char const *names[2], \
 		section_funk.get_segname(ptr_section, segname);
 		section_funk.get_sectname(ptr_section, sectname);
 		if ((!names[0] || !ft_strcmp(names[0], segname)) \
-			&& (!names[1] || !ft_strcmp(names[1], sectname)))
-			opera(ptr_section, section_funk);
+			&& (!names[1] || !ft_strcmp(names[1], sectname)) \
+			&& !opera(ptr_section, section_funk))
+			return (log_error(ERR_THROW, "section operation failed", FROM));
 		ptr_section = (t_section*)((char*)ptr_section + section_funk.size_of);
 		i++;
 	}
@@ -70,9 +71,7 @@ bool	manage_macho(size_t offset, size_t size, uint32_t magic, \
 	if (!push_bounds(offset, size, BT_MACHO))
 		return (log_error(ERR_THROW, "failed to set macho bounds", FROM));
 	set_endianness(MAGIC_IS_CIGAM(magic));
-	funk = (MAGIC_IS_64(magic)) ? \
-		(t_funk){ &header64, &segment64, &section64, &nlist64 } : \
-		(t_funk){ &header32, &segment32, &section32, &nlist32 };
+	funk = set_funk(MAGIC_IS_64(magic));
 	if (!ctor(funk))
 	{
 		pop_bounds(BT_MACHO);

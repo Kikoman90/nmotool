@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/14 19:21:53 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 11:11:13 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 16:52:26 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,10 +86,7 @@ int			main(int argc, char **argv)
 
 	ret = 1;
 	if (!check_usage(argc, argv, &nb_of_files))
-	{
-		log_error(ERR_THROW, "nm failure", FROM);
-		return (EXIT_FAILURE);
-	}
+		return (log_error(ERR_THROW, "nm failure", FROM));
 	while (*++argv)
 	{
 		if (**argv != '-')
@@ -97,7 +94,8 @@ int			main(int argc, char **argv)
 			if (nb_of_files > 1)
 			{
 				ft_putchar('\n');
-				ft_putendl(*argv);
+				ft_putstr(*argv);
+				ft_putendl(":");
 			}
 			if (!machopera(*argv, &nm_conductor))
 				ret = log_error(ERR_THROW, "nm failure", FROM);

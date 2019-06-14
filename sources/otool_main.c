@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/14 19:22:00 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 11:19:24 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 17:04:57 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,11 @@ static bool	check_usage(int argc, char **argv, uint32_t *ptr_nb_of_files)
 	return (true);
 }
 
-int		main(int argc, char **argv)
+int			main(int argc, char **argv)
 {
 	int			ret;
 	uint32_t	nb_of_files;
-	
+
 	ret = 1;
 	if (!check_usage(argc, argv, &nb_of_files))
 	{
@@ -70,16 +70,18 @@ int		main(int argc, char **argv)
 	{
 		if (**argv != '-')
 		{
-			if (nb_of_files > 1)
-			{
-				ft_putchar('\n');
-				ft_putendl(*argv);
-			}
+			ft_putstr(*argv);
+			ft_putstr(":\n");
 			if (!machopera(*argv, &otool_conductor))
 				ret = log_error(ERR_THROW, "otool failure", FROM);
 		}
 	}
-	if (nb_of_files == 0 && !machopera(DEFAULT_TARGET, &otool_conductor))
-		ret = log_error(ERR_THROW, "otool failure", FROM);
+	if (nb_of_files == 0)
+	{
+		ft_putstr(DEFAULT_TARGET);
+		ft_putstr(":\n");
+		if (!machopera(DEFAULT_TARGET, &otool_conductor))
+			ret = log_error(ERR_THROW, "otool failure", FROM);
+	}
 	return ((ret) ? EXIT_SUCCESS : EXIT_FAILURE);
 }

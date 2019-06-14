@@ -1,38 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nlist_funk1.c                                      :+:      :+:    :+:   */
+/*   nlist_32.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 15:20:07 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 14:36:03 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 14:44:22 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "funk.h"
 
-uint32_t	n_strx32(t_nlist const *ptr_nlist)
+static uint32_t	n_strx(t_nlist const *ptr_nlist)
 {
-	return (swap32(ptr_nlist->nlist32.n_un.n_strx));
+	return (swap32(ptr_nlist->nlist_32.n_un.n_strx));
 }
 
-uint8_t		n_type32(t_nlist const *ptr_nlist)
+static uint8_t	n_type(t_nlist const *ptr_nlist)
 {
-	return (ptr_nlist->nlist32.n_type);
+	return (ptr_nlist->nlist_32.n_type);
 }
 
-uint8_t		n_sect32(t_nlist const *ptr_nlist)
+static uint8_t	n_sect(t_nlist const *ptr_nlist)
 {
-	return (ptr_nlist->nlist32.n_sect);
+	return (ptr_nlist->nlist_32.n_sect);
 }
 
-int16_t		n_desc32(t_nlist const *ptr_nlist)
+static int16_t	n_desc(t_nlist const *ptr_nlist)
 {
-	return (swap16(ptr_nlist->nlist32.n_desc));
+	return (swap16(ptr_nlist->nlist_32.n_desc));
 }
 
-uint64_t	n_value32(t_nlist const *ptr_nlist)
+static uint64_t	n_value(t_nlist const *ptr_nlist)
 {
-	return ((uint64_t)swap32(ptr_nlist->nlist32.n_value));
+	return ((uint64_t)swap32(ptr_nlist->nlist_32.n_value));
+}
+
+t_nlist_funk	nlist_funk_32(void)
+{
+	return ((t_nlist_funk)\
+		{ sizeof(struct nlist), &n_strx, &n_type, &n_sect, &n_desc, &n_value });
 }

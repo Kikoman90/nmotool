@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/06/11 20:14:29 by fsidler          ###   ########.fr        #
+#    Updated: 2019/06/14 16:31:56 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,18 +28,21 @@ INC_DIR =	includes
 SRC_DIR =	sources
 OBJ_DIR =	objs
 
-CHILD_DIR = funk
+CHILD_DIR = funk/32 \
+			funk/64 \
 
 SRC_COMMON =	endianness.c \
-				funk/fat_arch_funk1.c \
-				funk/fat_arch_funk2.c \
-				funk/header_funk.c \
-				funk/segment_funk.c \
-				funk/section_funk.c \
-				funk/nlist_funk1.c \
-				funk/nlist_funk2.c \
-				funk/funk1.c \
-				funk/funk2.c \
+				funk/32/fat_arch_32.c \
+				funk/32/header_32.c \
+				funk/32/segment_32.c \
+				funk/32/section_32.c \
+				funk/32/nlist_32.c \
+				funk/64/fat_arch_64.c \
+				funk/64/header_64.c \
+				funk/64/segment_64.c \
+				funk/64/section_64.c \
+				funk/64/nlist_64.c \
+				funk/funk.c \
 				logger.c \
 				file_info.c \
 				fat_arch.c \
@@ -53,7 +56,8 @@ SRC_NM = 		symbol_list.c \
 				nm_main.c \
 				$(SRC_COMMON)
 
-SRC_OTOOL =		otool.c \
+SRC_OTOOL =		otool_exec.c \
+				otool_main.c \
 				$(SRC_COMMON)
 
 OBJ_NM =	$(addprefix $(OBJ_DIR)/, $(SRC_NM:.c=.o))

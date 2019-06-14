@@ -6,64 +6,42 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/14 11:19:03 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 12:09:50 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 17:04:49 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "otool.h"
 
-/*
-static void		hexdump_text(const char *text, uint64_t offset, uint64_t size)
-{
-	uint64_t			i;
-	uint64_t			j;
+//
+#include <stdio.h> //
+//
 
-	ft_printf("Contents of (%s,%s) section\n", OTOOL_SEGMENT, OTOOL_SECTION);
+static bool	print_section_content(t_section const *ptr_section, \
+	t_section_funk section_funk)
+{
+	uint64_t	i;
+	uint64_t	j;
+	uint64_t	addr;
+	uint64_t	size;
+	uint32_t	offset;
+	char const	*buf;
+
+	addr = section_funk.addr(ptr_section);
+	size = section_funk.size(ptr_section);
+	offset = section_funk.offset(ptr_section);
+	if (!(buf = get_safe(offset, size, BT_MACHO)))
+		return (log_error(ERR_THROW, "failed to get section content", FROM));
+	ft_putendl("Contents of (__TEXT,__text) section");
 	i = 0;
 	while (i < size)
 	{
-		ft_printf("%016llx\t", offset + i);
+		;//printf("%016llx\t", addr + i);
 		j = 0;
 		while (j < 0x10 && i + j < size)
-			ft_printf("%02hhx ", text[i + j++]);
-		ft_printf("\n");
+			;//printf("%02hhx ", buf[i + j++]);
+		;//printf("\n");
 		i += 0x10;
 	}
-}
-
-static bool		print_section(const size_t offset)
-{
-	struct section		*sect;
-	char				*text;
-
-	if (!(sect = safe(offset, sizeof(*sect))))
-		return (errors(ERR_FILE, "bad section offset"));
-	if (!(text = safe(endian_4(sect->offset), endian_4(sect->size))))
-		return (errors(ERR_FILE, "bad text offset"));
-
-	hexdump_text(text, endian_4(sect->addr), endian_4(sect->size));
-	return (true);
-}
-
-static bool		print_section_64(const size_t offset)
-{
-	struct section_64	*sect;
-	char				*text;
-
-	if (!(sect = safe(offset, sizeof(*sect))))
-		return (errors(ERR_FILE, "bad section offset"));
-	if (!(text = safe(endian_4(sect->offset), endian_8(sect->size))))
-		return (errors(ERR_FILE, "bad text offset"));
-
-	hexdump_text(text, endian_8(sect->addr), endian_8(sect->size));
-	return (true);
-}
-*/
-
-static void	print_section_content(t_section const *ptr_section, \
-	t_section_funk section_funk)
-{
-	
 	return (true);
 }
 

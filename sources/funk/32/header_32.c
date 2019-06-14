@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   segment_32.c                                       :+:      :+:    :+:   */
+/*   header_32.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/05/28 15:30:10 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 13:21:18 by fsidler          ###   ########.fr       */
+/*   Created: 2019/05/28 15:27:43 by fsidler           #+#    #+#             */
+/*   Updated: 2019/06/14 14:51:05 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "funk.h"
 
-static uint32_t	cmdsize(t_segment_command const *ptr_cmd)
+static uint32_t	ncmds(t_mach_header const *ptr_header)
 {
-	return (swap32(ptr_cmd->seg_cmd_32.cmdsize));
+	return (swap32(ptr_header->header_32.ncmds));
 }
 
-static uint32_t	nsects(t_segment_command const *ptr_cmd)
+static uint32_t	sizeofcmds(t_mach_header const *ptr_header)
 {
-	return (swap32(ptr_cmd->seg_cmd_32.nsects));
+	return (swap32(ptr_header->header_32.sizeofcmds));
 }
 
-t_segment_funk	segment_funk_32(void)
+t_header_funk	header_funk_32(void)
 {
-	return ((t_segment_funk)\
-		{ sizeof(struct segment_command), &cmdsize, &nsects, LC_SEGMENT });
+	return ((t_header_funk){ sizeof(struct mach_header), &ncmds, &sizeofcmds });
 }

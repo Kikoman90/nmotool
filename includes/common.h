@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/24 16:02:42 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 11:40:07 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 15:20:34 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 
 typedef bool	(*t_conductor)(t_funk);
 typedef bool	(*t_command_op)(size_t, t_funk);
-typedef void	(*t_section_op)(t_section const *, t_section_funk);
+typedef bool	(*t_section_op)(t_section const *, t_section_funk);
 
 /*
 ** fat_arch.c	=> 5 functions

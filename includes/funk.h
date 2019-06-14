@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/28 16:28:19 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 13:19:33 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/14 15:12:27 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@
 
 typedef union					u_mach_header
 {
-	struct mach_header			mach_hdr_32;
-	struct mach_header_64		mach_hdr_64;
+	struct mach_header			header_32;
+	struct mach_header_64		header_64;
 }								t_mach_header;
 
 typedef struct					s_header_funk
@@ -35,12 +35,12 @@ typedef struct					s_header_funk
 }								t_header_funk;
 
 /*
-** funk/header_32.c				=> 3 functions
+** funk/32/header_32.c			=> 3 functions
 */
 t_header_funk					header_funk_32(void);
 
 /*
-** funk/header_64.c				=> 3 functions
+** funk/64/header_64.c			=> 3 functions
 */
 t_header_funk					header_funk_64(void);
 
@@ -60,19 +60,19 @@ typedef struct					s_fat_arch_funk
 }								t_fat_arch_funk;
 
 /*
-** funk/fat_arch_32.c			=> 5 functions
+** funk/32/fat_arch_32.c		=> 5 functions
 */
 t_fat_arch_funk					fat_arch_funk_32(void);
 
 /*
-** funk/fat_arch_64.c			=> 5 functions
+** funk/64/fat_arch_64.c		=> 5 functions
 */
 t_fat_arch_funk					fat_arch_funk_64(void);
 
 typedef union					u_segment_command
 {
-	struct segment_command		seg_cmd_32;
-	struct segment_command_64	seg_cmd_64;
+	struct segment_command		segment_32;
+	struct segment_command_64	segment_64;
 }								t_segment_command;
 
 typedef struct					s_segment_funk
@@ -84,19 +84,19 @@ typedef struct					s_segment_funk
 }								t_segment_funk;
 
 /*
-** funk/segment_32.c			=> 3 functions
+** funk/32/segment_32.c			=> 3 functions
 */
 t_segment_funk					segment_funk_32(void);
 
 /*
-** funk/segment_64.c			=> 3 functions
+** funk/64/segment_64.c			=> 3 functions
 */
 t_segment_funk					segment_funk_64(void);
 
 typedef union					u_section
 {
-	struct section				sec32;
-	struct section_64			sec64;
+	struct section				section_32;
+	struct section_64			section_64;
 }								t_section;
 
 typedef struct					s_section_funk
@@ -110,31 +110,19 @@ typedef struct					s_section_funk
 }								t_section_funk;
 
 /*
-** funk/section_funk1.c			=> 5 functions
+** funk/32/section_32.c			=> 6 functions
 */
-char							*get_sectname32(t_section const *ptr_section, \
-									char copy[16]);
-char							*get_segname32(t_section const *ptr_section, \
-									char copy[16]);
-uint64_t						addr32(t_section const *ptr_section);
-uint64_t						size32(t_section const *ptr_section);
-uint32_t						offset32(t_section const *ptr_section);
+t_section_funk					section_funk_32(void);
 
 /*
-** funk/section_funk2.c			=> 5 functions
+** funk/64/section_64.c			=> 6 functions
 */
-char							*get_sectname64(t_section const *ptr_section, \
-									char copy[16]);
-char							*get_segname64(t_section const *ptr_section, \
-									char copy[16]);
-uint64_t						addr64(t_section const *ptr_section);
-uint64_t						size64(t_section const *ptr_section);
-uint32_t						offset64(t_section const *ptr_section);
+t_section_funk					section_funk_64(void);
 
 typedef union					u_nlist
 {
-	struct nlist				nlist32;
-	struct nlist_64				nlist64;
+	struct nlist				nlist_32;
+	struct nlist_64				nlist_64;
 }								t_nlist;
 
 typedef struct					s_nlist_funk
@@ -148,22 +136,14 @@ typedef struct					s_nlist_funk
 }								t_nlist_funk;
 
 /*
-** funk/nlist_funk1.c			=> 5 functions
+** funk/32/nlist_32.c			=> 6 functions
 */
-uint32_t						n_strx32(t_nlist const *ptr_nlist);
-uint8_t							n_type32(t_nlist const *ptr_nlist);
-uint8_t							n_sect32(t_nlist const *ptr_nlist);
-int16_t							n_desc32(t_nlist const *ptr_nlist);
-uint64_t						n_value32(t_nlist const *ptr_nlist);
+t_nlist_funk					nlist_funk_32(void);
 
 /*
-** funk/nlist_funk2.c			=> 5 functions
+** funk/64/nlist_64.c			=> 6 functions
 */
-uint32_t						n_strx64(t_nlist const *ptr_nlist);
-uint8_t							n_type64(t_nlist const *ptr_nlist);
-uint8_t							n_sect64(t_nlist const *ptr_nlist);
-int16_t							n_desc64(t_nlist const *ptr_nlist);
-uint64_t						n_value64(t_nlist const *ptr_nlist);
+t_nlist_funk					nlist_funk_64(void);
 
 typedef struct					s_funk
 {
@@ -174,19 +154,8 @@ typedef struct					s_funk
 }								t_funk;
 
 /*
-** funk/funk1.c					=> 4 functions
+** funk/funk.c					=> 1 function
 */
-t_header_funk					header32(void);
-t_segment_funk					segment32(void);
-t_section_funk					section32(void);
-t_nlist_funk					nlist32(void);
-
-/*
-** funk/funk2.c					=> 4 functions
-*/
-t_header_funk					header64(void);
-t_segment_funk					segment64(void);
-t_section_funk					section64(void);
-t_nlist_funk					nlist64(void);
+t_funk							set_funk(bool is_64);
 
 #endif
