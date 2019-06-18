@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 14:28:36 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 09:55:43 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 15:37:50 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,6 @@ typedef enum			e_bounds_target {
 	BT_MACHO = 1,
 	BT_TOP = 2
 }						t_bounds_target;
-
-# define VALID_BT(t)	((t == BT_FILE || t == BT_MACHO || t == BT_TOP) ? 1 : 0)
-
-# define FILE_BOUNDS	g_file_info.bounds[BT_FILE]
-# define MACHO_BOUNDS	g_file_info.bounds[BT_MACHO]
-# define TOP_BOUNDS		g_file_info.bounds[BT_TOP]
 
 /*
 ** file_info.c			=> 5 functions

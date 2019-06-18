@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/28 16:28:19 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 15:12:27 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 15:28:09 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,12 +110,34 @@ typedef struct					s_section_funk
 }								t_section_funk;
 
 /*
-** funk/32/section_32.c			=> 6 functions
+** funk/32/section_32.c			=> 5 functions
+*/
+char							*get_sectname_32(t_section const *ptr_section, \
+									char copy[16]);
+char							*get_segname_32(t_section const *ptr_section, \
+									char copy[16]);
+uint64_t						addr_32(t_section const *ptr_section);
+uint64_t						size_32(t_section const *ptr_section);
+uint32_t						offset_32(t_section const *ptr_section);
+
+/*
+** funk/32/section_32_main.c	=> 1 function
 */
 t_section_funk					section_funk_32(void);
 
 /*
-** funk/64/section_64.c			=> 6 functions
+** funk/64/section_64.c			=> 5 functions
+*/
+char							*get_sectname_64(t_section const *ptr_section, \
+									char copy[16]);
+char							*get_segname_64(t_section const *ptr_section, \
+									char copy[16]);
+uint64_t						addr_64(t_section const *ptr_section);
+uint64_t						size_64(t_section const *ptr_section);
+uint32_t						offset_64(t_section const *ptr_section);
+
+/*
+** funk/64/section_64_main.c	=> 1 function
 */
 t_section_funk					section_funk_64(void);
 
@@ -136,12 +158,30 @@ typedef struct					s_nlist_funk
 }								t_nlist_funk;
 
 /*
-** funk/32/nlist_32.c			=> 6 functions
+** funk/32/nlist_32.c			=> 5 functions
+*/
+uint32_t						n_strx_32(t_nlist const *ptr_nlist);
+uint8_t							n_type_32(t_nlist const *ptr_nlist);
+uint8_t							n_sect_32(t_nlist const *ptr_nlist);
+int16_t							n_desc_32(t_nlist const *ptr_nlist);
+uint64_t						n_value_32(t_nlist const *ptr_nlist);
+
+/*
+** funk/32/nlist_32_main.c		=> 1 function
 */
 t_nlist_funk					nlist_funk_32(void);
 
 /*
-** funk/64/nlist_64.c			=> 6 functions
+** funk/64/nlist_64.c			=> 5 functions
+*/
+uint32_t						n_strx_64(t_nlist const *ptr_nlist);
+uint8_t							n_type_64(t_nlist const *ptr_nlist);
+uint8_t							n_sect_64(t_nlist const *ptr_nlist);
+int16_t							n_desc_64(t_nlist const *ptr_nlist);
+uint64_t						n_value_64(t_nlist const *ptr_nlist);
+
+/*
+** funk/64/nlist_64_main.c		=> 1 function
 */
 t_nlist_funk					nlist_funk_64(void);
 
