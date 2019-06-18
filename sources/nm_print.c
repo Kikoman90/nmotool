@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/09 09:06:30 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 10:10:45 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 14:39:08 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,6 @@ uint8_t g_print_flags = 0;
 void		toggle_print_flag(enum e_print_flag flag)
 {
 	g_print_flags ^= (uint8_t)flag;
-}
-
-static void	print_hexa_address(uint64_t addr, uint32_t len)
-{
-	static char const hex_string[16] = "0123456789abcdef";
-
-	if (len)
-	{
-		print_hexa_address(addr / 16, len - 1);
-		ft_putchar(hex_string[addr % 16]);
-	}
 }
 
 static bool	discard_symbol(char type)
@@ -51,7 +40,7 @@ void		print_symbols(void)
 			{
 				if (symbol->address \
 					|| !(symbol->type == 'u' || symbol->type == 'U'))
-					print_hexa_address(symbol->address, 16);
+					print_hexa(symbol->address, 16);
 				else
 					ft_putnchar(' ', 16);
 				ft_putchar(' ');

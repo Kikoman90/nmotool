@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:55:13 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 04:54:33 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 14:39:02 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,9 @@ typedef enum	e_error_type {
 }				t_error_type;
 
 /*
-** logger.c		=> 4 functions
+** logger.c		=> 5 functions
 */
+void			print_hexa(uint64_t addr, uint32_t len);
 char			*log_from(char const *file, char const *func, uint32_t line);
 bool			log_error(t_error_type type, char const *err, char *from);
 void			*log_error_null(t_error_type type, char const *err, char *from);

@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/14 19:22:00 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 17:04:57 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 14:43:51 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,7 @@ int			main(int argc, char **argv)
 
 	ret = 1;
 	if (!check_usage(argc, argv, &nb_of_files))
-	{
-		log_error(ERR_THROW, "otool failure", FROM);
-		return (EXIT_FAILURE);
-	}
+		return (log_error(ERR_THROW, "otool failure", FROM));
 	while (*++argv)
 	{
 		if (**argv != '-')

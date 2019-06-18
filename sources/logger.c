@@ -6,11 +6,22 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:55:08 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 04:55:13 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 14:38:55 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "logger.h"
+
+void		print_hexa(uint64_t addr, uint32_t len)
+{
+	static char const hex_string[16] = "0123456789abcdef";
+
+	if (len)
+	{
+		print_hexa_address(addr / 16, len - 1);
+		ft_putchar(hex_string[addr % 16]);
+	}
+}
 
 char		*log_from(char const *file, char const *func, uint32_t line)
 {
