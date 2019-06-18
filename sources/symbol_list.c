@@ -6,20 +6,13 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/06 15:38:01 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/11 20:31:32 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 15:07:05 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
 static t_symbolist g_symbolist = { NULL, 0, NO_SYM };
-
-/*
-** destroy_symbolist();
-** if (!(g_symbolist.zone_start = \
-**	(t_symbol*)malloc((size_t)(nsyms * sizeof(t_symbol)))))
-**	return (log_error(ERR_MALLOC, "failed to allocate symbol list", FROM));
-*/
 
 bool		reset_symbolist(uint32_t nsyms)
 {

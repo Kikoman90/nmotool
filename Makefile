@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/06/14 16:31:56 by fsidler          ###   ########.fr        #
+#    Updated: 2019/06/18 15:06:27 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ FLAGS =	-Wall -Wextra -Werror -MMD
 #-pedantic
 
 ifeq ($(DEBUG), yes)
-	FLAGS += -DNMO_DEBUG #-fsanitize=address#,undefined #-g
+	FLAGS += -DNMO_DEBUG #-fsanitize=address,undefined #-g
 endif
 
 LIBFT_DIR = libft
@@ -87,11 +87,11 @@ $(CHILD_DIR):
 		@mkdir -p $(OBJ_DIR)/$@
 
 $(FT_NM): $(OBJ_NM)
-		@$(CC) $(FLAGS) -o $@ $(OBJ_NM) -L $(LIBFT_DIR) -lft
+		@$(CC) $(FLAGS) -o $@ $^ -L $(LIBFT_DIR) -lft
 		@echo ${B}[$(FT_NM)] compilation success${X}
 
 $(FT_OTOOL): $(OBJ_OTOOL)
-		@$(CC) $(FLAGS) -o $@ $(OBJ_OTOOL) -L $(LIBFT_DIR) -lft
+		@$(CC) $(FLAGS) -o $@ $^ -L $(LIBFT_DIR) -lft
 		@echo ${Y}[$(FT_OTOOL)] compilation success${X}
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c

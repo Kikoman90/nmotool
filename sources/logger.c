@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:55:08 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/18 14:38:55 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 14:52:51 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void		print_hexa(uint64_t addr, uint32_t len)
 
 	if (len)
 	{
-		print_hexa_address(addr / 16, len - 1);
+		print_hexa(addr / 16, len - 1);
 		ft_putchar(hex_string[addr % 16]);
 	}
 }
