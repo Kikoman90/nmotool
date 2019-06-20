@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/06/18 16:24:32 by fsidler          ###   ########.fr        #
+#    Updated: 2019/06/20 20:50:53 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,7 @@ FT_NM =		ft_nm
 FT_OTOOL =	ft_otool
 
 CC =	gcc
-FLAGS =	-Wall -Wextra -Werror -MMD
-#-pedantic
+FLAGS =	-Wall -Wextra -Werror -pedantic -MMD
 
 ifeq ($(DEBUG), yes)
 	FLAGS += -DNMO_DEBUG #-fsanitize=address,undefined #-g
@@ -36,16 +35,12 @@ SRC_COMMON =	endianness.c \
 				funk/32/header_32.c \
 				funk/32/segment_32.c \
 				funk/32/section_32.c \
-				funk/32/section_32_main.c \
 				funk/32/nlist_32.c \
-				funk/32/nlist_32_main.c \
 				funk/64/fat_arch_64.c \
 				funk/64/header_64.c \
 				funk/64/segment_64.c \
 				funk/64/section_64.c \
-				funk/64/section_64_main.c \
 				funk/64/nlist_64.c \
-				funk/64/nlist_64_main.c \
 				funk/funk.c \
 				logger.c \
 				file_info.c \

@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 16:56:51 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/18 16:57:32 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/20 20:49:43 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,8 @@ bool	manage_macho(size_t offset, size_t size, uint32_t magic, \
 
 	if (!push_bounds(offset, size, BT_MACHO))
 		return (log_error(ERR_THROW, "failed to set macho bounds", FROM));
-	set_endianness(magic == MH_CIGAM || magic == MH_CIGAM_64 \
-		|| magic == FAT_CIGAM || magic == FAT_CIGAM_64);
-	funk = set_funk(magic == MH_MAGIC_64 || magic == MH_CIGAM_64 \
-		|| magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64);
+	set_endianness(MAGIC_IS_CIGAM(magic));
+	funk = set_funk(MAGIC_IS_64(magic));
 	if (!ctor(funk))
 	{
 		pop_bounds(BT_MACHO);

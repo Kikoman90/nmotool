@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/04 14:19:10 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/20 20:08:53 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/20 20:46:24 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	*get_safe(size_t offset, size_t size, t_bounds_target b_target)
 
 	if (offset + size < offset)
 		return (NULL);
-	if (b_target == BT_FILE || b_target == BT_MACHO || b_target == BT_TOP)
+	if (VALID_BT(b_target))
 	{
 		if (!(bounds = g_file_info.bounds[b_target]))
 			return (log_error_null(ERR_THROW, "empty target bounds", FROM));
@@ -43,22 +43,20 @@ void	pop_bounds(t_bounds_target b_target)
 	struct s_bounds	*pop;
 
 	pop = NULL;
-	if ((b_target == BT_FILE || b_target == BT_MACHO || b_target == BT_TOP) \
-		&& (pop = g_file_info.bounds[b_target]))
+	if (VALID_BT(b_target) && (pop = g_file_info.bounds[b_target]))
 	{
 		if (b_target == BT_TOP)
-			g_file_info.bounds[BT_TOP] = \
-				(pop->next != g_file_info.bounds[BT_MACHO]) ? pop->next : NULL;
+			TOP_BOUNDS = (pop->next != MACHO_BOUNDS) ? pop->next : NULL;
 		else if (b_target == BT_MACHO)
 		{
-			while (g_file_info.bounds[BT_TOP])
+			while (TOP_BOUNDS)
 				pop_bounds(BT_TOP);
-			g_file_info.bounds[BT_MACHO] = NULL;
+			MACHO_BOUNDS = NULL;
 		}
 		else if (b_target == BT_FILE)
 		{
 			pop_bounds(BT_MACHO);
-			g_file_info.bounds[BT_FILE] = NULL;
+			FILE_BOUNDS = NULL;
 		}
 		free(pop);
 	}
@@ -71,14 +69,14 @@ bool	push_bounds(size_t offset, size_t size, t_bounds_target b_target)
 
 	if (offset + size < offset)
 		return (NULL);
-	if (!(b_target == BT_FILE || b_target == BT_MACHO || b_target == BT_TOP))
+	if (!VALID_BT(b_target))
 		return (log_error(ERR_THROW, "invalid bounds target !", FROM));
-	if (b_target == BT_TOP && !(next = g_file_info.bounds[BT_TOP]))
+	if (b_target == BT_TOP && !(next = TOP_BOUNDS))
 	{
-		if (!(next = g_file_info.bounds[BT_MACHO]))
+		if (!(next = MACHO_BOUNDS))
 			return (log_error(ERR_THROW, "missing macho bounds", FROM));
 	}
-	else if (b_target == BT_MACHO && !(next = g_file_info.bounds[BT_FILE]))
+	else if (b_target == BT_MACHO && !(next = FILE_BOUNDS))
 		return (log_error(ERR_THROW, "missing file bounds", FROM));
 	if (b_target != BT_FILE && offset + size > next->size)
 		return (log_error(ERR_THROW, "invalid bounds", FROM));
@@ -95,10 +93,9 @@ bool	push_bounds(size_t offset, size_t size, t_bounds_target b_target)
 
 bool	unload_file(void)
 {
-	if (g_file_info.ptr && g_file_info.ptr != MAP_FAILED \
-		&& g_file_info.bounds[BT_FILE])
+	if (g_file_info.ptr && g_file_info.ptr != MAP_FAILED && FILE_BOUNDS)
 	{
-		if (munmap(g_file_info.ptr, g_file_info.bounds[BT_FILE]->size) == -1)
+		if (munmap(g_file_info.ptr, FILE_BOUNDS->size) == -1)
 		{
 			pop_bounds(BT_FILE);
 			return (log_error(ERR_MUNMAP, strerror(errno), FROM));

@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/24 16:02:42 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/18 17:51:43 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/20 20:47:56 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,14 @@
 # else
 #  define CPU_ARCH CPU_TYPE_ANY
 # endif
+
+# define IS_MH_CIGAM(magic)		(magic == MH_CIGAM || magic == MH_CIGAM_64)
+# define IS_FAT_CIGAM(magic)	(magic == FAT_CIGAM || magic == FAT_CIGAM_64)
+# define MAGIC_IS_CIGAM(magic)	(IS_MH_CIGAM(magic) || IS_FAT_CIGAM(magic))
+
+# define IS_MH_64(magic)		(magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
+# define IS_FAT_64(magic)		(magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64)
+# define MAGIC_IS_64(magic)		(IS_MH_64(magic) || IS_FAT_64(magic))
 
 typedef bool	(*t_conductor)(t_funk);
 typedef bool	(*t_command_op)(size_t, t_funk);

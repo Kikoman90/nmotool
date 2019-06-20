@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/11 20:11:02 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/18 17:57:44 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/20 20:48:52 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,13 +93,10 @@ bool		manage_fat(uint32_t magic, t_conductor ctor)
 	t_fat_arch_funk			arch_funk;
 	struct fat_header const	*ptr_header;
 
-	set_endianness(endian_swap = (magic == MH_CIGAM || magic == MH_CIGAM_64 \
-		|| magic == FAT_CIGAM || magic == FAT_CIGAM_64));
+	set_endianness(endian_swap = MAGIC_IS_CIGAM(magic));
 	if (!(ptr_header = get_safe(0, sizeof(*ptr_header), BT_FILE)))
 		return (log_error(ERR_THROW, "failed to get fat header", FROM));
 	nfat_arch = swap32(ptr_header->nfat_arch);
-	arch_funk = (magic == MH_MAGIC_64 || magic == MH_CIGAM_64 \
-		|| magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64) ? \
-		fat_arch_funk_64() : fat_arch_funk_32();
+	arch_funk = (MAGIC_IS_64(magic)) ? fat_arch_funk_64() : fat_arch_funk_32();
 	return (extract_arch(nfat_arch, arch_funk, endian_swap, ctor));
 }
