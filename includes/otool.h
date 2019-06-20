@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/24 16:02:19 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/18 14:47:48 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 16:20:19 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,15 @@
 # include "common.h"
 
 /*
-** otool_exec.c	=> 4 functions
+** otool_print.c	=> 3 functions
 */
-bool			otool_conductor(t_funk funk);
+void				set_otool_print_padding(uint32_t padding);
+bool				print_section_content(t_section const *ptr_section, \
+						t_section_funk section_funk);
+
+/*
+** otool_exec.c		=> 2 functions
+*/
+bool				otool_conductor(t_funk funk);
 
 #endif

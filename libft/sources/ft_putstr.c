@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/12/21 18:47:31 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/05 18:03:28 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/20 20:11:29 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,13 @@ void	ft_putstr(char const *str)
 
 void	ft_putnstr(char const *str, size_t n)
 {
-	size_t	len;
+	size_t	i;
 
 	if (str)
 	{
-		if ((len = ft_strlen(str)) <= n)
-			write(1, str, len);
-		else
-			write(1, str, n);
+		i = 0;
+		while (i < n && str[i])
+			write(1, &str[i++], 1);
 	}
 }
 
@@ -39,13 +38,12 @@ void	ft_putstr_fd(short fd, char const *str)
 
 void	ft_putnstr_fd(short fd, char const *str, size_t n)
 {
-	size_t	len;
+	size_t	i;
 
 	if (str)
 	{
-		if ((len = ft_strlen(str)) <= n)
-			write(fd, str, len);
-		else
-			write(fd, str, n);
+		i = 0;
+		while (i < n && str[i])
+			write(fd, &str[i++], 1);
 	}
 }

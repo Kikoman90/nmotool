@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/06 15:38:01 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/18 15:12:32 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 15:43:18 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,12 @@
 
 static t_symbolist g_symbolist = { NULL, 0, NO_SYM };
 
-/*
-** destroy_symbolist();
-** if (!(g_symbolist.zone_start = \
-**	(t_symbol*)malloc((size_t)(nsyms * sizeof(t_symbol)))))
-**	return (log_error(ERR_MALLOC, "failed to allocate symbol list", FROM));
-*/
-
 bool		reset_symbolist(uint32_t nsyms)
 {
+	destroy_symbolist();
 	if (!(g_symbolist.zone_start = (t_symbol*)\
-		realloc(g_symbolist.zone_start, (size_t)nsyms * sizeof(t_symbol))))
-		return (log_error(ERR_MALLOC, "failed to realloc symbol list", FROM));
+		malloc((size_t)nsyms * sizeof(t_symbol))))
+		return (log_error(ERR_MALLOC, "failed to allocate symbol list", FROM));
 	g_symbolist.cur_free = 0;
 	g_symbolist.sorted_list_start = NO_SYM;
 	return (true);

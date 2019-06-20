@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/11 20:11:02 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 15:06:41 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 17:57:44 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,14 @@ static bool	arch_is_valid(t_fat_arch const *ptr_fat_arch, \
 	if (!(ptr_magic = get_safe(arch_funk.offset(ptr_fat_arch), \
 		arch_funk.size(ptr_fat_arch), BT_FILE)))
 		return (log_error(ERR_THROW, "failed to get magic number", FROM));
-	else if ((*ptr_magic == MH_MAGIC_64 || *ptr_magic == MH_CIGAM_64) \
-		|| ((*ptr_magic == MH_MAGIC || *ptr_magic == MH_CIGAM) \
-		&& (!found_valid || g_all_arch)))
+	if (!(ptr_arch_info = NXGetArchInfoFromCpuType(\
+		arch_funk.cputype(ptr_fat_arch), arch_funk.cpusubtype(ptr_fat_arch))))
+		return (log_error(ERR_THROW, "failed to get architecture info", FROM));
+	if (arch_funk.cputype(ptr_fat_arch) == CPU_ARCH \
+		|| ((!found_valid || g_all_arch) && (*ptr_magic == MH_MAGIC_64 \
+		|| *ptr_magic == MH_CIGAM_64 || *ptr_magic == MH_MAGIC \
+		|| *ptr_magic == MH_CIGAM)))
 	{
-		if (!(ptr_arch_info = \
-			NXGetArchInfoFromCpuType(arch_funk.cputype(ptr_fat_arch), \
-			arch_funk.cpusubtype(ptr_fat_arch))))
-			return (false);
 		if (g_all_arch)
 			print_arch(ptr_arch_info->name);
 		*ptr_valid_magic = *ptr_magic;
@@ -93,10 +93,13 @@ bool		manage_fat(uint32_t magic, t_conductor ctor)
 	t_fat_arch_funk			arch_funk;
 	struct fat_header const	*ptr_header;
 
-	set_endianness(endian_swap = MAGIC_IS_CIGAM(magic));
+	set_endianness(endian_swap = (magic == MH_CIGAM || magic == MH_CIGAM_64 \
+		|| magic == FAT_CIGAM || magic == FAT_CIGAM_64));
 	if (!(ptr_header = get_safe(0, sizeof(*ptr_header), BT_FILE)))
 		return (log_error(ERR_THROW, "failed to get fat header", FROM));
 	nfat_arch = swap32(ptr_header->nfat_arch);
-	arch_funk = (MAGIC_IS_64(magic)) ? fat_arch_funk_64() : fat_arch_funk_32();
+	arch_funk = (magic == MH_MAGIC_64 || magic == MH_CIGAM_64 \
+		|| magic == FAT_MAGIC_64 || magic == FAT_CIGAM_64) ? \
+		fat_arch_funk_64() : fat_arch_funk_32();
 	return (extract_arch(nfat_arch, arch_funk, endian_swap, ctor));
 }
