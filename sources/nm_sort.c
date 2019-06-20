@@ -6,13 +6,13 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/09 03:18:16 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/09 10:11:00 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 16:20:51 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "nm.h"
 
-uint8_t g_sort_flags = 0;
+static uint8_t g_sort_flags = 0;
 
 void		toggle_sort_flag(enum e_sort_flag flag)
 {

@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/28 16:28:19 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/18 15:28:09 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 15:52:52 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,6 +187,7 @@ t_nlist_funk					nlist_funk_64(void);
 
 typedef struct					s_funk
 {
+	uint32_t					print_padding;
 	t_header_funk				(*header)(void);
 	t_segment_funk				(*segment)(void);
 	t_section_funk				(*section)(void);

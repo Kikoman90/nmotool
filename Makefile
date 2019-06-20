@@ -6,7 +6,7 @@
 #    By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/02/11 18:12:26 by fsidler           #+#    #+#              #
-#    Updated: 2019/06/18 15:29:56 by fsidler          ###   ########.fr        #
+#    Updated: 2019/06/18 16:24:32 by fsidler          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,7 +60,8 @@ SRC_NM = 		symbol_list.c \
 				nm_main.c \
 				$(SRC_COMMON)
 
-SRC_OTOOL =		otool_exec.c \
+SRC_OTOOL =		otool_print.c \
+				otool_exec.c \
 				otool_main.c \
 				$(SRC_COMMON)
 

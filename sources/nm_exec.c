@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/09 10:01:34 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/11 20:45:57 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/20 20:09:40 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ bool		nm_conductor(t_funk funk)
 	t_header_funk		header_funk;
 	t_mach_header const	*ptr_header;
 
+	set_nm_print_padding(funk.print_padding);
 	header_funk = funk.header();
 	if (!(ptr_header = get_safe(0, header_funk.size_of, BT_MACHO)))
 		return (log_error(ERR_THROW, "failed to get macho header", FROM));

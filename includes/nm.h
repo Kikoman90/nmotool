@@ -6,7 +6,7 @@
 /*   By: fsidler <fsidler@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/24 16:02:01 by fsidler           #+#    #+#             */
-/*   Updated: 2019/06/14 15:25:32 by fsidler          ###   ########.fr       */
+/*   Updated: 2019/06/18 16:22:42 by fsidler          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ bool				sort_symbols(t_symbol *sym, t_symbol *cmp);
 ** nm_print.c		=> 4 functions
 */
 void				toggle_print_flag(enum e_print_flag flag);
+void				set_nm_print_padding(uint32_t print_padding);
 void				print_symbols(void);
 
 /*
